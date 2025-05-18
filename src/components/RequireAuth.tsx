@@ -9,10 +9,31 @@ interface RequireAuthProps {
 }
 
 const RequireAuth: React.FC<RequireAuthProps> = ({ children, adminOnly = false }) => {
+  // En modo demostración, simulamos un usuario autenticado
+  const demoUser = {
+    id: "demo-user-1",
+    name: "Usuario Demo",
+    email: "usuario@ejemplo.com",
+    role: "user",
+    createdAt: new Date().toISOString()
+  };
+
+  // Para un usuario administrador descomentar esta línea y comentar la anterior
+  // const demoUser = {
+  //   id: "demo-admin-1", 
+  //   name: "Administrador Demo", 
+  //   email: "admin@ejemplo.com", 
+  //   role: "admin",
+  //   createdAt: new Date().toISOString()
+  // };
+
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
+  // Bypass la autenticación para la demostración
   useEffect(() => {
+    // Si estuviéramos en producción, mantendríamos este código activo
+    /*
     if (!loading) {
       if (!user) {
         navigate('/login');
@@ -20,18 +41,17 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children, adminOnly = false }
         navigate('/dashboard');
       }
     }
+    */
   }, [user, loading, adminOnly, navigate]);
 
   if (loading) {
-    return <div>Cargando...</div>;
-  }
-
-  if (!user) {
-    return null; // El useEffect redirigirá
-  }
-
-  if (adminOnly && user.role !== 'admin') {
-    return null; // El useEffect redirigirá
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-muted/30">
+        <div className="animate-pulse text-center">
+          <p className="text-lg font-satoshi font-medium text-muted-foreground">Cargando...</p>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;

@@ -33,7 +33,7 @@
     --input: 214 32% 91%;
     --ring: 221 83% 53%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -91,21 +91,50 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-satoshi;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-satoshi font-bold;
   }
 }
 
 @layer components {
   .account-card {
-    @apply bg-white rounded-lg shadow-md p-5 border border-border flex flex-col gap-2 hover:shadow-lg transition-shadow duration-200 hover:border-primary/30;
+    @apply bg-white rounded-xl shadow-md p-6 border border-border flex flex-col gap-3 hover:shadow-lg transition-shadow duration-200 hover:border-primary/30;
   }
   
   .transaction-item {
-    @apply p-3 border-b border-border flex items-center justify-between hover:bg-muted/30 transition-colors duration-200;
+    @apply p-4 border-b border-border flex items-center justify-between hover:bg-muted/30 transition-colors duration-200;
   }
 
   .stat-card {
-    @apply flex flex-col gap-1 bg-white rounded-lg shadow-sm p-4 border border-border;
+    @apply flex flex-col gap-2 bg-white rounded-xl shadow-sm p-5 border border-border;
+  }
+
+  /* Nuevos estilos mejorados */
+  .dashboard-layout {
+    @apply max-w-7xl mx-auto px-4 py-8;
+  }
+
+  .card-accent {
+    @apply border-l-4 border-l-accent;
+  }
+
+  .card-danger {
+    @apply border-l-4 border-l-destructive;
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-br from-blue-500 to-blue-600 text-white;
+  }
+
+  .gradient-accent {
+    @apply bg-gradient-to-br from-accent to-accent/80 text-accent-foreground;
+  }
+
+  .gradient-cool {
+    @apply bg-gradient-to-br from-blue-500 to-violet-600 text-white;
   }
 }
