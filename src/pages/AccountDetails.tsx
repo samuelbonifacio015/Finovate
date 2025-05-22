@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,13 +10,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AccountForm from '@/components/AccountForm';
 import TransferForm from '@/components/TransferForm';
 import TransactionForm from '@/components/TransactionForm';
+import TransactionEditForm from '@/components/TransactionEditForm';
 import { Account, Transaction, TransactionFormData } from '@/types/finance';
 import { 
   getAccountById, 
   getAccounts, 
   getTransactions, 
   updateAccount, 
-  createTransaction, 
+  createTransaction,
+  editTransaction,
   findTransactionByCustomId 
 } from '@/services/financeService';
 import { formatCurrency, formatShortDate } from '@/utils/formatters';
@@ -46,7 +47,8 @@ const AccountDetails = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogType, setDialogType] = useState<'edit-account' | 'deposit' | 'withdraw' | 'transfer' | 'add-transaction'>('edit-account');
+  const [dialogType, setDialogType] = useState<'edit-account' | 'deposit' | 'withdraw' | 'transfer' | 'add-transaction' | 'edit-transaction'>('edit-account');
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
   // Cargar datos
   const loadData = () => {
@@ -173,6 +175,33 @@ const AccountDetails = () => {
     } catch (error) {
       console.error('Error al agregar transacción:', error);
       toast.error('Error al agregar la transacción');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditTransaction = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setDialogType('edit-transaction');
+    setIsDialogOpen(true);
+  };
+
+  const handleUpdateTransaction = async (data: TransactionFormData, originalId: string) => {
+    if (!account) return;
+    
+    setIsLoading(true);
+    try {
+      editTransaction(originalId, data);
+      
+      // Recargar datos
+      loadData();
+      setIsDialogOpen(false);
+      setSelectedTransaction(null);
+      
+      toast.success('Transacción actualizada exitosamente');
+    } catch (error) {
+      console.error('Error al actualizar transacción:', error);
+      toast.error('Error al actualizar la transacción');
     } finally {
       setIsLoading(false);
     }
@@ -414,6 +443,7 @@ const AccountDetails = () => {
                   accounts={allAccounts}
                   currentAccountId={account.id}
                   onTransactionDeleted={loadData}
+                  onEditTransaction={handleEditTransaction}
                 />
               </TabsContent>
               
@@ -476,6 +506,7 @@ const AccountDetails = () => {
               {dialogType === 'withdraw' && 'Realizar Retiro'}
               {dialogType === 'transfer' && 'Transferir Fondos'}
               {dialogType === 'add-transaction' && 'Añadir Transacción'}
+              {dialogType === 'edit-transaction' && 'Editar Transacción'}
             </DialogTitle>
             <DialogDescription>
               {dialogType === 'edit-account' && 'Modifica los detalles de tu cuenta.'}
@@ -483,6 +514,7 @@ const AccountDetails = () => {
               {dialogType === 'withdraw' && 'Retira fondos de tu cuenta.'}
               {dialogType === 'transfer' && 'Transfiere fondos entre tus cuentas.'}
               {dialogType === 'add-transaction' && 'Agrega una nueva transacción manualmente.'}
+              {dialogType === 'edit-transaction' && 'Modifica los detalles de la transacción.'}
             </DialogDescription>
           </DialogHeader>
           
@@ -514,6 +546,14 @@ const AccountDetails = () => {
           {dialogType === 'add-transaction' && (
             <TransactionForm
               onSubmit={handleAddTransaction}
+              isLoading={isLoading}
+            />
+          )}
+
+          {dialogType === 'edit-transaction' && selectedTransaction && (
+            <TransactionEditForm
+              transaction={selectedTransaction}
+              onSubmit={handleUpdateTransaction}
               isLoading={isLoading}
             />
           )}

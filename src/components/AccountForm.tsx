@@ -3,7 +3,6 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Account, AccountType } from '@/types/finance';
 import {
   Form,
   FormControl,
@@ -21,48 +20,55 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-const formSchema = z.object({
-  name: z.string().min(3, { message: 'El nombre debe tener al menos 3 caracteres' }),
-  type: z.enum(['checking', 'savings', 'investment', 'credit'] as const),
-  balance: z.coerce.number().min(0, { message: 'El balance debe ser un número positivo' }),
-  currency: z.string().min(1, { message: 'Selecciona una moneda' }),
-});
-
-type FormData = z.infer<typeof formSchema>;
+import { Account } from '@/types/finance';
 
 interface AccountFormProps {
-  initialData?: Partial<Account>;
-  onSubmit: (data: FormData) => void;
+  initialData?: Account;
+  onSubmit: (data: Partial<Account>) => void;
   isLoading?: boolean;
 }
 
 const AccountForm: React.FC<AccountFormProps> = ({
-  initialData = {},
+  initialData,
   onSubmit,
   isLoading = false,
 }) => {
-  const form = useForm<FormData>({
+  const formSchema = z.object({
+    name: z.string().min(3, 'El nombre debe tener al menos 3 caracteres'),
+    type: z.enum(['checking', 'savings', 'investment', 'credit']),
+    balance: z.coerce.number().min(0, 'El saldo inicial no puede ser negativo'),
+    currency: z.enum(['USD', 'PEN']),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: initialData.name || '',
-      type: (initialData.type as AccountType) || 'checking',
-      balance: initialData.balance || 0,
-      currency: initialData.currency || 'USD',
+      name: initialData?.name || '',
+      type: initialData?.type || 'checking',
+      balance: initialData?.balance || 0,
+      currency: initialData?.currency || 'USD',
     },
   });
 
+  const handleSubmit = (data: z.infer<typeof formSchema>) => {
+    onSubmit(data);
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre de la cuenta</FormLabel>
+              <FormLabel>Nombre de la Cuenta</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Ej: Mi Cuenta Corriente" />
+                <Input 
+                  placeholder="Ej: Cuenta de Ahorros Principal" 
+                  {...field} 
+                  disabled={isLoading}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -75,13 +81,14 @@ const AccountForm: React.FC<AccountFormProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Tipo de Cuenta</FormLabel>
-              <Select
-                onValueChange={field.onChange}
+              <Select 
+                onValueChange={field.onChange} 
                 defaultValue={field.value}
+                disabled={isLoading || !!initialData}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un tipo de cuenta" />
+                    <SelectValue placeholder="Selecciona un tipo" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -91,6 +98,11 @@ const AccountForm: React.FC<AccountFormProps> = ({
                   <SelectItem value="credit">Crédito</SelectItem>
                 </SelectContent>
               </Select>
+              {!!initialData && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  El tipo de cuenta no se puede cambiar después de la creación.
+                </p>
+              )}
               <FormMessage />
             </FormItem>
           )}
@@ -101,9 +113,15 @@ const AccountForm: React.FC<AccountFormProps> = ({
           name="balance"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Saldo Inicial</FormLabel>
+              <FormLabel>{initialData ? 'Ajustar Saldo' : 'Saldo Inicial'}</FormLabel>
               <FormControl>
-                <Input type="number" step="0.01" {...field} />
+                <Input 
+                  type="number" 
+                  step="0.01" 
+                  placeholder="0.00" 
+                  {...field} 
+                  disabled={isLoading}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -116,9 +134,10 @@ const AccountForm: React.FC<AccountFormProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Moneda</FormLabel>
-              <Select
-                onValueChange={field.onChange}
+              <Select 
+                onValueChange={field.onChange} 
                 defaultValue={field.value}
+                disabled={isLoading || !!initialData}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -126,20 +145,22 @@ const AccountForm: React.FC<AccountFormProps> = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="USD">USD (Dólar Americano)</SelectItem>
-                  <SelectItem value="EUR">EUR (Euro)</SelectItem>
-                  <SelectItem value="GBP">GBP (Libra Esterlina)</SelectItem>
-                  <SelectItem value="JPY">JPY (Yen Japonés)</SelectItem>
-                  <SelectItem value="MXN">MXN (Peso Mexicano)</SelectItem>
+                  <SelectItem value="USD">USD - Dólar Estadounidense</SelectItem>
+                  <SelectItem value="PEN">PEN - Sol Peruano</SelectItem>
                 </SelectContent>
               </Select>
+              {!!initialData && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  La moneda no se puede cambiar después de la creación.
+                </p>
+              )}
               <FormMessage />
             </FormItem>
           )}
         />
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Guardando...' : initialData.id ? 'Actualizar Cuenta' : 'Crear Cuenta'}
+          {isLoading ? 'Procesando...' : initialData ? 'Actualizar Cuenta' : 'Crear Cuenta'}
         </Button>
       </form>
     </Form>

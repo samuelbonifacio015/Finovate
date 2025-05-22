@@ -11,8 +11,7 @@ const Navigation: React.FC = () => {
   
   // Para la demostración, siempre consideramos al usuario como autenticado
   const isDashboard = location.pathname.includes('/dashboard') || 
-                     location.pathname.includes('/accounts') ||
-                     location.pathname.includes('/admin');
+                     location.pathname.includes('/accounts');
 
   const handleLogout = () => {
     logout();
@@ -38,9 +37,6 @@ const Navigation: React.FC = () => {
                 </Link>
                 <Link to="/accounts/demo-account" className={`hover:text-primary transition-colors text-base ${location.pathname.includes('/accounts') ? 'text-primary font-medium' : 'text-gray-600'}`}>
                   Cuenta Demo
-                </Link>
-                <Link to="/admin" className={`hover:text-primary transition-colors text-base ${location.pathname === '/admin' ? 'text-primary font-medium' : 'text-gray-600'}`}>
-                  Admin
                 </Link>
               </nav>
             )}

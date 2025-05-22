@@ -1,4 +1,3 @@
-
 import { Account, AccountType, Transaction, TransactionType, TransferData, TransactionFormData } from '../types/finance';
 import { getCurrentUser } from './authService';
 import { toast } from 'sonner';
@@ -131,6 +130,12 @@ export const findTransactionByCustomId = (customId: string): Transaction | undef
   return allTransactions.find((tx: Transaction) => tx.customId === customId);
 };
 
+// Buscar transacción por ID
+export const getTransactionById = (id: string): Transaction | undefined => {
+  const allTransactions = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY) || '[]');
+  return allTransactions.find((tx: Transaction) => tx.id === id);
+};
+
 // Obtener transacciones de una cuenta
 export const getTransactions = (accountId?: string): Transaction[] => {
   try {
@@ -215,6 +220,105 @@ export const createTransaction = (
   localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(allTransactions));
   
   return newTransaction;
+};
+
+// Editar una transacción existente
+export const editTransaction = (
+  id: string,
+  updates: Partial<TransactionFormData>
+): Transaction => {
+  const allTransactions = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY) || '[]');
+  const transactionIndex = allTransactions.findIndex((tx: Transaction) => tx.id === id);
+  
+  if (transactionIndex === -1) {
+    toast.error('Transacción no encontrada');
+    throw new Error('Transacción no encontrada');
+  }
+  
+  const transaction = allTransactions[transactionIndex];
+  const account = getAccountById(transaction.accountId);
+  
+  if (!account) {
+    toast.error('Cuenta asociada no encontrada');
+    throw new Error('Cuenta no encontrada');
+  }
+  
+  // Verificar permiso
+  const currentUser = getCurrentUser();
+  if (!currentUser || account.userId !== currentUser.id) {
+    toast.error('No tienes permiso para editar esta transacción');
+    throw new Error('Permiso denegado');
+  }
+  
+  // Verificar que no se está cambiando el ID personalizado a uno que ya existe
+  if (updates.customId && updates.customId !== transaction.customId) {
+    const existingTransaction = findTransactionByCustomId(updates.customId);
+    if (existingTransaction && existingTransaction.id !== id) {
+      toast.error('El ID de transacción ya existe');
+      throw new Error('ID duplicado');
+    }
+  }
+  
+  // Para transferencias, solo permitir cambios en descripción, fecha y hora
+  if (transaction.type === 'transfer') {
+    const validUpdates: Partial<TransactionFormData> = {};
+    if (updates.description) validUpdates.description = updates.description;
+    if (updates.date) validUpdates.date = updates.date;
+    if (updates.time) validUpdates.time = updates.time;
+    
+    allTransactions[transactionIndex] = {
+      ...transaction,
+      ...validUpdates
+    };
+    
+    // Si es una transferencia, también actualizar la transacción relacionada
+    if (transaction.relatedAccountId) {
+      const relatedTxId = allTransactions.findIndex(
+        (tx: Transaction) => 
+          tx.accountId === transaction.relatedAccountId && 
+          tx.relatedAccountId === transaction.accountId &&
+          tx.customId.includes(transaction.customId.split('-')[0])
+      );
+      
+      if (relatedTxId !== -1) {
+        if (updates.description) {
+          const oppositeDirection = transaction.type === 'deposit' ? 'De: ' : 'A: ';
+          const accountName = getAccountById(transaction.accountId)?.name || 'Cuenta';
+          allTransactions[relatedTxId].description = `Transferencia ${oppositeDirection}${accountName}: ${updates.description.split(':').pop()?.trim() || ''}`;
+        }
+        if (updates.date) allTransactions[relatedTxId].date = updates.date;
+        if (updates.time) allTransactions[relatedTxId].time = updates.time;
+      }
+    }
+  } else {
+    // Para depósitos y retiros normales
+    // Calcular la diferencia en el monto para ajustar el balance de la cuenta
+    let balanceAdjustment = 0;
+    if (updates.amount && updates.amount !== transaction.amount) {
+      if (transaction.type === 'deposit') {
+        balanceAdjustment = updates.amount - transaction.amount;
+      } else if (transaction.type === 'withdrawal') {
+        balanceAdjustment = transaction.amount - updates.amount;
+      }
+      
+      // Actualizar el saldo de la cuenta si cambió el monto
+      if (balanceAdjustment !== 0) {
+        const newBalance = account.balance + balanceAdjustment;
+        updateAccount(account.id, { balance: newBalance });
+      }
+    }
+    
+    // Actualizar la transacción
+    allTransactions[transactionIndex] = {
+      ...transaction,
+      ...updates
+    };
+  }
+  
+  localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(allTransactions));
+  toast.success('Transacción actualizada');
+  
+  return allTransactions[transactionIndex];
 };
 
 // Eliminar una transacción
