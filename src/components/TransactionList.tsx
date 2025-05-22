@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Transaction, Account } from '@/types/finance';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { TrashIcon, Search, Edit } from 'lucide-react';
+import { TrashIcon, Search } from 'lucide-react';
 import { deleteTransaction } from '@/services/financeService';
 
 interface TransactionListProps {
@@ -12,7 +13,6 @@ interface TransactionListProps {
   accounts: Account[];
   currentAccountId?: string;
   onTransactionDeleted?: () => void;
-  onEditTransaction?: (transaction: Transaction) => void;
 }
 
 // Función para obtener el icono según el tipo de transacción
@@ -47,8 +47,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
   transactions, 
   accounts, 
   currentAccountId,
-  onTransactionDeleted,
-  onEditTransaction
+  onTransactionDeleted
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -137,12 +136,6 @@ const TransactionList: React.FC<TransactionListProps> = ({
     }
   };
 
-  const handleEditTransaction = (transaction: Transaction) => {
-    if (onEditTransaction) {
-      onEditTransaction(transaction);
-    }
-  };
-
   return (
     <div className="bg-white rounded-lg shadow-sm border border-border">
       <div className="p-4 border-b">
@@ -201,14 +194,6 @@ const TransactionList: React.FC<TransactionListProps> = ({
                 <div className={getAmountClass(transaction)}>
                   {getFormattedAmount(transaction)}
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-                  onClick={() => handleEditTransaction(transaction)}
-                >
-                  <Edit size={16} />
-                </Button>
                 <Button 
                   variant="ghost" 
                   size="icon" 
