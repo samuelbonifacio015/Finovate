@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -310,7 +309,7 @@ const AccountDetails = () => {
                   {account.type === 'investment' && 'Inversión'}
                   {account.type === 'credit' && 'Crédito'}
                   {' • '}
-                  ID: {account.id.substring(0, 8)}...
+                  ID: {account.id ? account.id.substring(0, 8) : ''}...
                 </p>
               </div>
               

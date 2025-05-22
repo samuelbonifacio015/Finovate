@@ -66,8 +66,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
   // Ordenar transacciones por fecha, más reciente primero
   const sortedTransactions = [...filteredTransactions].sort(
     (a, b) => {
-      const dateA = new Date(`${a.date}T${a.time}`).getTime();
-      const dateB = new Date(`${b.date}T${b.time}`).getTime();
+      const dateA = new Date(`${a.date}T${a.time || '00:00:00'}`).getTime();
+      const dateB = new Date(`${b.date}T${b.time || '00:00:00'}`).getTime();
       return dateB - dateA;
     }
   );
@@ -203,10 +203,10 @@ const TransactionList: React.FC<TransactionListProps> = ({
                         </>
                       )}
                       <span className="inline-block">•</span>
-                      <span>{transaction.date} {transaction.time.substring(0, 5)}</span>
+                      <span>{transaction.date} {(transaction.time || '').substring(0, 5)}</span>
                       <span className="inline-block">•</span>
                       <span className="text-xs bg-slate-100 rounded px-2 py-0.5">
-                        ID: {transaction.customId}
+                        ID: {transaction.customId || ''}
                       </span>
                     </div>
                   </div>
