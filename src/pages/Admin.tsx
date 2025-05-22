@@ -38,7 +38,7 @@ const Admin = () => {
       id: '2',
       email: 'admin@ejemplo.com',
       name: 'Administrador',
-      role: 'admin',
+      role: 'user', // Cambiado de 'admin' a 'user'
       createdAt: new Date().toISOString(),
     }
   ]);
@@ -55,12 +55,7 @@ const Admin = () => {
       return;
     }
     
-    // Verificar que sea administrador
-    if (user.role !== 'admin') {
-      navigate('/dashboard');
-      return;
-    }
-    
+    // Ya no verificamos si es administrador porque solo tenemos usuarios normales
     loadAccounts();
   }, [user, navigate]);
   
@@ -90,7 +85,7 @@ const Admin = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-finance-primary">Panel de Administrador</h1>
+              <h1 className="text-3xl font-bold text-finance-primary">Panel de Gestión</h1>
               <p className="text-muted-foreground">
                 Gestiona usuarios y sus cuentas desde un solo lugar.
               </p>
@@ -102,11 +97,8 @@ const Admin = () => {
               <p className="text-sm text-muted-foreground">Total Usuarios</p>
               <p className="text-3xl font-bold">{users.length}</p>
               <div className="flex gap-2 mt-2">
-                <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                  Administradores: {users.filter(u => u.role === 'admin').length}
-                </span>
                 <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                  Usuarios: {users.filter(u => u.role === 'user').length}
+                  Usuarios: {users.length}
                 </span>
               </div>
             </div>
@@ -167,12 +159,8 @@ const Admin = () => {
                           <TableCell>{user.name}</TableCell>
                           <TableCell>{user.email}</TableCell>
                           <TableCell>
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              user.role === 'admin' 
-                                ? 'bg-yellow-100 text-yellow-800' 
-                                : 'bg-blue-100 text-blue-800'
-                            }`}>
-                              {user.role === 'admin' ? 'Administrador' : 'Usuario'}
+                            <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                              Usuario
                             </span>
                           </TableCell>
                           <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
@@ -277,7 +265,7 @@ const Admin = () => {
                         <div>
                           <h3 className="text-lg font-semibold">{user.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {user.email} • {user.role === 'admin' ? 'Administrador' : 'Usuario'}
+                            {user.email} • Usuario
                           </p>
                         </div>
                         <div className="mt-2 md:mt-0">
