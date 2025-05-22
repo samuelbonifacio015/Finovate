@@ -1,4 +1,3 @@
-
 import { Account, AccountType, Transaction, TransactionType, TransferData, TransactionFormData } from '../types/finance';
 import { getCurrentUser } from './authService';
 import { toast } from 'sonner';
@@ -147,6 +146,92 @@ export const getTransactions = (accountId?: string): Transaction[] => {
     console.error('Error al obtener transacciones:', error);
     return [];
   }
+};
+
+// Obtener una transacción por ID
+export const getTransactionById = (id: string): Transaction | undefined => {
+  const allTransactions = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY) || '[]');
+  return allTransactions.find((tx: Transaction) => tx.id === id);
+};
+
+// Actualizar una transacción existente
+export const updateTransaction = (
+  id: string, 
+  updates: Partial<Transaction>
+): Transaction => {
+  const allTransactions = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY) || '[]');
+  const transactionIndex = allTransactions.findIndex((tx: Transaction) => tx.id === id);
+  
+  if (transactionIndex === -1) {
+    toast.error('Transacción no encontrada');
+    throw new Error('Transacción no encontrada');
+  }
+  
+  const transaction = allTransactions[transactionIndex];
+  const account = getAccountById(transaction.accountId);
+  
+  if (!account) {
+    toast.error('Cuenta asociada no encontrada');
+    throw new Error('Cuenta no encontrada');
+  }
+  
+  // Verificar permiso
+  const currentUser = getCurrentUser();
+  if (!currentUser || account.userId !== currentUser.id) {
+    toast.error('No tienes permiso para modificar esta transacción');
+    throw new Error('Permiso denegado');
+  }
+
+  // Si es una transferencia, no se permite cambiar el monto
+  if (transaction.type === 'transfer' && updates.amount && updates.amount !== transaction.amount) {
+    toast.error('No se puede cambiar el monto de una transferencia');
+    throw new Error('No se puede cambiar el monto de una transferencia');
+  }
+  
+  // Si intenta cambiar el ID personalizado, verificamos que no exista
+  if (updates.customId && updates.customId !== transaction.customId) {
+    const existingTransaction = findTransactionByCustomId(updates.customId);
+    if (existingTransaction && existingTransaction.id !== id) {
+      toast.error('El ID de transacción ya existe');
+      throw new Error('ID duplicado');
+    }
+  }
+  
+  // Actualizar la transacción
+  allTransactions[transactionIndex] = {
+    ...transaction,
+    ...updates,
+  };
+  
+  localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(allTransactions));
+  
+  // Si es una transferencia y la actualización es para la transacción de salida,
+  // también debemos actualizar la transacción de entrada correspondiente
+  if (transaction.type === 'transfer' && transaction.relatedAccountId) {
+    const relatedTransaction = allTransactions.find(
+      (tx: Transaction) => tx.accountId === transaction.relatedAccountId && 
+      tx.relatedAccountId === transaction.accountId && 
+      tx.customId.replace('-OUT', '') === transaction.customId.replace('-IN', '')
+    );
+    
+    if (relatedTransaction) {
+      const relatedIndex = allTransactions.findIndex((tx: Transaction) => tx.id === relatedTransaction.id);
+      
+      // Actualizar campos específicos en la transacción relacionada
+      if (updates.date) allTransactions[relatedIndex].date = updates.date;
+      if (updates.time) allTransactions[relatedIndex].time = updates.time;
+      if (updates.description) {
+        // Actualizar la descripción manteniendo el formato "Transferencia de/a..."
+        const otherAccount = getAccountById(transaction.accountId);
+        const direction = transaction.customId.includes('-OUT') ? 'de' : 'a';
+        allTransactions[relatedIndex].description = `Transferencia ${direction} ${otherAccount?.name}: ${updates.description.replace(/^Transferencia (de|a) .+: /, '')}`;
+      }
+      
+      localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(allTransactions));
+    }
+  }
+  
+  return allTransactions[transactionIndex];
 };
 
 // Crear una nueva transacción

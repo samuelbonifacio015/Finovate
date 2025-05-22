@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Transaction, Account } from '@/types/finance';
 import { formatCurrency, formatDate } from '@/utils/formatters';
@@ -7,12 +6,15 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { TrashIcon, Search, PencilIcon } from 'lucide-react';
 import { deleteTransaction } from '@/services/financeService';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import TransactionEditForm from '@/components/TransactionEditForm';
 
 interface TransactionListProps {
   transactions: Transaction[];
   accounts: Account[];
   currentAccountId?: string;
   onTransactionDeleted?: () => void;
+  onTransactionUpdated?: () => void;
 }
 
 // Función para obtener el icono según el tipo de transacción
@@ -47,9 +49,12 @@ const TransactionList: React.FC<TransactionListProps> = ({
   transactions, 
   accounts, 
   currentAccountId,
-  onTransactionDeleted
+  onTransactionDeleted,
+  onTransactionUpdated
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   
   // Filtrar transacciones por ID personalizado o descripción
   // Añadir comprobaciones para evitar llamar a toLowerCase() en valores undefined
@@ -137,78 +142,120 @@ const TransactionList: React.FC<TransactionListProps> = ({
     }
   };
 
+  const handleEditTransaction = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleTransactionUpdated = () => {
+    setIsEditDialogOpen(false);
+    setSelectedTransaction(null);
+    if (onTransactionUpdated) {
+      onTransactionUpdated();
+    }
+    toast.success("Transacción actualizada exitosamente");
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-border">
-      <div className="p-4 border-b">
-        <h3 className="font-semibold text-lg mb-3">
-          Historial de Transacciones
-        </h3>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Buscar por ID o descripción..."
-            className="pl-9"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <>
+      <div className="bg-white rounded-lg shadow-sm border border-border">
+        <div className="p-4 border-b">
+          <h3 className="font-semibold text-lg mb-3">
+            Historial de Transacciones
+          </h3>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Buscar por ID o descripción..."
+              className="pl-9"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
+        
+        {sortedTransactions.length === 0 ? (
+          <div className="p-8 text-center text-muted-foreground">
+            {searchTerm ? 'No se encontraron transacciones que coincidan con la búsqueda.' : 'No hay transacciones para mostrar.'}
+          </div>
+        ) : (
+          <div className="divide-y">
+            {sortedTransactions.map((transaction) => (
+              <div key={transaction.id} className="p-4 flex justify-between items-start hover:bg-muted/20">
+                <div className="flex items-center">
+                  <div className="mr-3">
+                    {getTransactionIcon(transaction)}
+                  </div>
+                  <div>
+                    <div className="font-medium">
+                      {transaction.description}
+                    </div>
+                    <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-2">
+                      <span>{getTransactionType(transaction)}</span>
+                      {transaction.relatedAccountId && (
+                        <>
+                          <span className="inline-block">•</span>
+                          <span>
+                            {transaction.accountId === currentAccountId 
+                              ? `A: ${getAccountName(transaction.relatedAccountId)}` 
+                              : `De: ${getAccountName(transaction.accountId)}`}
+                          </span>
+                        </>
+                      )}
+                      <span className="inline-block">•</span>
+                      <span>{transaction.date} {transaction.time.substring(0, 5)}</span>
+                      <span className="inline-block">•</span>
+                      <span className="text-xs bg-slate-100 rounded px-2 py-0.5">
+                        ID: {transaction.customId}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={getAmountClass(transaction)}>
+                    {getFormattedAmount(transaction)}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                      onClick={() => handleEditTransaction(transaction)}
+                    >
+                      <PencilIcon size={16} />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => handleDeleteTransaction(transaction.id)}
+                    >
+                      <TrashIcon size={16} />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      
-      {sortedTransactions.length === 0 ? (
-        <div className="p-8 text-center text-muted-foreground">
-          {searchTerm ? 'No se encontraron transacciones que coincidan con la búsqueda.' : 'No hay transacciones para mostrar.'}
-        </div>
-      ) : (
-        <div className="divide-y">
-          {sortedTransactions.map((transaction) => (
-            <div key={transaction.id} className="p-4 flex justify-between items-start hover:bg-muted/20">
-              <div className="flex items-center">
-                <div className="mr-3">
-                  {getTransactionIcon(transaction)}
-                </div>
-                <div>
-                  <div className="font-medium">
-                    {transaction.description}
-                  </div>
-                  <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-2">
-                    <span>{getTransactionType(transaction)}</span>
-                    {transaction.relatedAccountId && (
-                      <>
-                        <span className="inline-block">•</span>
-                        <span>
-                          {transaction.accountId === currentAccountId 
-                            ? `A: ${getAccountName(transaction.relatedAccountId)}` 
-                            : `De: ${getAccountName(transaction.accountId)}`}
-                        </span>
-                      </>
-                    )}
-                    <span className="inline-block">•</span>
-                    <span>{transaction.date} {transaction.time.substring(0, 5)}</span>
-                    <span className="inline-block">•</span>
-                    <span className="text-xs bg-slate-100 rounded px-2 py-0.5">
-                      ID: {transaction.customId}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className={getAmountClass(transaction)}>
-                  {getFormattedAmount(transaction)}
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-                  onClick={() => handleDeleteTransaction(transaction.id)}
-                >
-                  <TrashIcon size={16} />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+
+      {/* Dialog for editing transaction */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Editar Transacción</DialogTitle>
+          </DialogHeader>
+          {selectedTransaction && (
+            <TransactionEditForm 
+              transaction={selectedTransaction}
+              onSuccess={handleTransactionUpdated}
+              onCancel={() => setIsEditDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

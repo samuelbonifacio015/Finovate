@@ -17,7 +17,7 @@ export interface Account {
   name: string;
   type: AccountType;
   balance: number;
-  currency: 'USD' | 'PEN'; // Limitado a USD y Soles Peruanos
+  currency: 'USD' | 'PEN'; // Limitado a USD y Sol Peruano
   createdAt: string;
   updatedAt: string;
 }
@@ -50,4 +50,12 @@ export interface TransactionFormData {
   description: string;
   date: string;
   time: string;
+}
+
+export interface TransactionUpdate {
+  customId?: string;
+  description?: string;
+  amount?: number;
+  date?: string;
+  time?: string;
 }

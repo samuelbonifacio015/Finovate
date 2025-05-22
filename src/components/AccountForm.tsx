@@ -127,10 +127,7 @@ const AccountForm: React.FC<AccountFormProps> = ({
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="USD">USD (Dólar Americano)</SelectItem>
-                  <SelectItem value="EUR">EUR (Euro)</SelectItem>
-                  <SelectItem value="GBP">GBP (Libra Esterlina)</SelectItem>
-                  <SelectItem value="JPY">JPY (Yen Japonés)</SelectItem>
-                  <SelectItem value="MXN">MXN (Peso Mexicano)</SelectItem>
+                  <SelectItem value="PEN">PEN (Sol Peruano)</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

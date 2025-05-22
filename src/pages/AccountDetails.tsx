@@ -414,6 +414,7 @@ const AccountDetails = () => {
                   accounts={allAccounts}
                   currentAccountId={account.id}
                   onTransactionDeleted={loadData}
+                  onTransactionUpdated={loadData}
                 />
               </TabsContent>
               
