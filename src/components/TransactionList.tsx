@@ -5,7 +5,7 @@ import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { TrashIcon, Search } from 'lucide-react';
+import { TrashIcon, Search, PencilIcon } from 'lucide-react';
 import { deleteTransaction } from '@/services/financeService';
 
 interface TransactionListProps {
@@ -52,9 +52,10 @@ const TransactionList: React.FC<TransactionListProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   
   // Filtrar transacciones por ID personalizado o descripción
+  // Añadir comprobaciones para evitar llamar a toLowerCase() en valores undefined
   const filteredTransactions = transactions.filter(tx => 
-    tx.customId.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    tx.description.toLowerCase().includes(searchTerm.toLowerCase())
+    (tx.customId?.toLowerCase() || '').includes((searchTerm || '').toLowerCase()) || 
+    (tx.description?.toLowerCase() || '').includes((searchTerm || '').toLowerCase())
   );
 
   // Ordenar transacciones por fecha, más reciente primero
