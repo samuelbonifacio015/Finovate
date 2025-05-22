@@ -18,7 +18,7 @@ const DEMO_USERS: User[] = [
     id: '2',
     email: 'admin@ejemplo.com',
     name: 'Administrador',
-    role: 'admin',
+    role: 'user', // Changed from 'admin' to 'user'
     createdAt: new Date().toISOString(),
   },
 ];
@@ -102,7 +102,7 @@ export const logout = (): void => {
   window.location.href = '/';
 };
 
+// Previously checking for 'admin' role, now removed since we only have 'user'
 export const isAdmin = (): boolean => {
-  const user = getCurrentUser();
-  return user?.role === 'admin';
+  return false; // Since we removed the admin role, always return false
 };
