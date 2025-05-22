@@ -30,19 +30,6 @@ const HomePage = () => {
     }
   ];
 
-  const testimonials = [
-    {
-      content: "FinanzApp me ha ayudado a organizar mis finanzas como nunca antes. Ahora puedo ver claramente mis gastos e ingresos.",
-      author: "Carlos R.",
-      role: "Emprendedor"
-    },
-    {
-      content: "Increíble herramienta para mantener todas mis cuentas en orden. La interfaz es muy intuitiva y fácil de usar.",
-      author: "María L.",
-      role: "Profesional independiente"
-    }
-  ];
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Banner Principal */}
@@ -130,32 +117,6 @@ const HomePage = () => {
                   <div className="text-4xl mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                   <p className="text-gray-600">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Sección de Testimonios */}
-      <div className="bg-gray-50 py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-2">Lo que dicen nuestros usuarios</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Miles de personas ya han tomado control de sus finanzas con FinanzApp.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="border-none shadow-md bg-white">
-                <CardContent className="p-6">
-                  <p className="text-gray-700 mb-4">"{testimonial.content}"</p>
-                  <div>
-                    <p className="font-medium">{testimonial.author}</p>
-                    <p className="text-sm text-gray-500">{testimonial.role}</p>
-                  </div>
                 </CardContent>
               </Card>
             ))}
