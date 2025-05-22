@@ -1,5 +1,5 @@
 
-export type UserRole = 'user' | 'admin';
+export type UserRole = 'user';
 
 export interface User {
   id: string;
@@ -17,7 +17,7 @@ export interface Account {
   name: string;
   type: AccountType;
   balance: number;
-  currency: string;
+  currency: 'USD' | 'PEN'; // Limitado a USD y Soles Peruanos
   createdAt: string;
   updatedAt: string;
 }
@@ -26,11 +26,13 @@ export type TransactionType = 'deposit' | 'withdrawal' | 'transfer';
 
 export interface Transaction {
   id: string;
+  customId: string; // ID personalizado para búsquedas
   accountId: string;
   type: TransactionType;
   amount: number;
   description: string;
   date: string;
+  time: string; // Hora separada
   relatedAccountId?: string;
 }
 
@@ -39,4 +41,13 @@ export interface TransferData {
   toAccountId: string;
   amount: number;
   description: string;
+}
+
+export interface TransactionFormData {
+  customId: string;
+  type: TransactionType;
+  amount: number;
+  description: string;
+  date: string;
+  time: string;
 }

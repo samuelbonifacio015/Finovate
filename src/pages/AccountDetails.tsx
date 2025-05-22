@@ -10,8 +10,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AccountForm from '@/components/AccountForm';
 import TransferForm from '@/components/TransferForm';
-import { Account, Transaction } from '@/types/finance';
-import { getAccountById, getAccounts, getTransactions, updateAccount, createTransaction } from '@/services/financeService';
+import TransactionForm from '@/components/TransactionForm';
+import { Account, Transaction, TransactionFormData } from '@/types/finance';
+import { 
+  getAccountById, 
+  getAccounts, 
+  getTransactions, 
+  updateAccount, 
+  createTransaction, 
+  findTransactionByCustomId 
+} from '@/services/financeService';
 import { formatCurrency, formatShortDate } from '@/utils/formatters';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
@@ -38,42 +46,42 @@ const AccountDetails = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogType, setDialogType] = useState<'edit-account' | 'deposit' | 'withdraw' | 'transfer'>('edit-account');
+  const [dialogType, setDialogType] = useState<'edit-account' | 'deposit' | 'withdraw' | 'transfer' | 'add-transaction'>('edit-account');
 
   // Cargar datos
+  const loadData = () => {
+    if (!id) return;
+    
+    // Cargar cuenta específica
+    const accountData = getAccountById(id);
+    if (!accountData) {
+      toast.error('Cuenta no encontrada');
+      navigate('/dashboard');
+      return;
+    }
+    
+    // Verificar permisos
+    if (user?.role !== 'admin' && accountData.userId !== user?.id) {
+      toast.error('No tienes permisos para ver esta cuenta');
+      navigate('/dashboard');
+      return;
+    }
+    
+    setAccount(accountData);
+    
+    // Cargar transacciones de la cuenta
+    const accountTransactions = getTransactions(id);
+    setTransactions(accountTransactions);
+    
+    // Cargar todas las cuentas (para transferencias)
+    setAllAccounts(getAccounts());
+  };
+
   useEffect(() => {
     if (!user) {
       navigate('/login');
       return;
     }
-    
-    if (!id) return;
-    
-    const loadData = () => {
-      // Cargar cuenta específica
-      const accountData = getAccountById(id);
-      if (!accountData) {
-        toast.error('Cuenta no encontrada');
-        navigate('/dashboard');
-        return;
-      }
-      
-      // Verificar permisos
-      if (user.role !== 'admin' && accountData.userId !== user.id) {
-        toast.error('No tienes permisos para ver esta cuenta');
-        navigate('/dashboard');
-        return;
-      }
-      
-      setAccount(accountData);
-      
-      // Cargar transacciones de la cuenta
-      const accountTransactions = getTransactions(id);
-      setTransactions(accountTransactions);
-      
-      // Cargar todas las cuentas (para transferencias)
-      setAllAccounts(getAccounts());
-    };
     
     loadData();
   }, [id, user, navigate]);
@@ -87,6 +95,7 @@ const AccountDetails = () => {
       setAccount(updatedAccount);
       setIsDialogOpen(false);
       toast.success('Cuenta actualizada exitosamente');
+      loadData();
     } catch (error) {
       console.error('Error al actualizar cuenta:', error);
       toast.error('Error al actualizar la cuenta');
@@ -103,11 +112,7 @@ const AccountDetails = () => {
       createTransaction(id, 'deposit', data.amount, data.description);
       
       // Recargar datos
-      const updatedAccount = getAccountById(id);
-      const updatedTransactions = getTransactions(id);
-      
-      setAccount(updatedAccount || null);
-      setTransactions(updatedTransactions);
+      loadData();
       setIsDialogOpen(false);
       
       toast.success('Depósito realizado exitosamente');
@@ -127,17 +132,47 @@ const AccountDetails = () => {
       createTransaction(id, 'withdrawal', data.amount, data.description);
       
       // Recargar datos
-      const updatedAccount = getAccountById(id);
-      const updatedTransactions = getTransactions(id);
-      
-      setAccount(updatedAccount || null);
-      setTransactions(updatedTransactions);
+      loadData();
       setIsDialogOpen(false);
       
       toast.success('Retiro realizado exitosamente');
     } catch (error) {
       console.error('Error al realizar retiro:', error);
       toast.error('Error al realizar el retiro');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddTransaction = async (data: TransactionFormData) => {
+    if (!account || !id) return;
+    
+    // Verificar que el ID personalizado no exista
+    if (findTransactionByCustomId(data.customId)) {
+      toast.error('El ID de transacción ya existe');
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      createTransaction(
+        id,
+        data.type,
+        data.amount,
+        data.description,
+        data.customId,
+        data.date,
+        data.time
+      );
+      
+      // Recargar datos
+      loadData();
+      setIsDialogOpen(false);
+      
+      toast.success('Transacción agregada exitosamente');
+    } catch (error) {
+      console.error('Error al agregar transacción:', error);
+      toast.error('Error al agregar la transacción');
     } finally {
       setIsLoading(false);
     }
@@ -150,13 +185,7 @@ const AccountDetails = () => {
       // y crea las transacciones correspondientes
       
       // Recargar datos
-      const updatedAccount = getAccountById(id!);
-      const updatedTransactions = getTransactions(id);
-      const updatedAllAccounts = getAccounts();
-      
-      setAccount(updatedAccount || null);
-      setTransactions(updatedTransactions);
-      setAllAccounts(updatedAllAccounts);
+      loadData();
       setIsDialogOpen(false);
       
       toast.success('Transferencia realizada exitosamente');
@@ -180,7 +209,7 @@ const AccountDetails = () => {
   }
 
   // Componente para el formulario de depósito o retiro
-  const TransactionForm = ({ onSubmit, isDeposit }: {
+  const SimpleTransactionForm = ({ onSubmit, isDeposit }: {
     onSubmit: (data: { amount: number, description: string }) => void,
     isDeposit: boolean
   }) => {
@@ -294,7 +323,7 @@ const AccountDetails = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
             <Card className="col-span-1 hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <Button 
@@ -345,6 +374,21 @@ const AccountDetails = () => {
               <CardContent className="p-6">
                 <Button 
                   className="w-full" 
+                  variant="outline"
+                  onClick={() => {
+                    setDialogType('add-transaction');
+                    setIsDialogOpen(true);
+                  }}
+                >
+                  Añadir Transacción
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="col-span-1 hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <Button 
+                  className="w-full" 
                   variant="ghost"
                   onClick={() => {
                     setDialogType('edit-account');
@@ -369,6 +413,7 @@ const AccountDetails = () => {
                   transactions={transactions}
                   accounts={allAccounts}
                   currentAccountId={account.id}
+                  onTransactionDeleted={loadData}
                 />
               </TabsContent>
               
@@ -398,7 +443,7 @@ const AccountDetails = () => {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Moneda</p>
-                        <p className="font-medium">{account.currency}</p>
+                        <p className="font-medium">{account.currency === 'USD' ? 'Dólar Estadounidense' : 'Sol Peruano'}</p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Fecha de Creación</p>
@@ -412,12 +457,6 @@ const AccountDetails = () => {
                         <p className="text-sm text-muted-foreground">ID de la Cuenta</p>
                         <p className="font-medium">{account.id}</p>
                       </div>
-                      {user?.role === 'admin' && (
-                        <div>
-                          <p className="text-sm text-muted-foreground">ID del Usuario</p>
-                          <p className="font-medium">{account.userId}</p>
-                        </div>
-                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -436,12 +475,14 @@ const AccountDetails = () => {
               {dialogType === 'deposit' && 'Realizar Depósito'}
               {dialogType === 'withdraw' && 'Realizar Retiro'}
               {dialogType === 'transfer' && 'Transferir Fondos'}
+              {dialogType === 'add-transaction' && 'Añadir Transacción'}
             </DialogTitle>
             <DialogDescription>
               {dialogType === 'edit-account' && 'Modifica los detalles de tu cuenta.'}
               {dialogType === 'deposit' && 'Agrega fondos a tu cuenta.'}
               {dialogType === 'withdraw' && 'Retira fondos de tu cuenta.'}
               {dialogType === 'transfer' && 'Transfiere fondos entre tus cuentas.'}
+              {dialogType === 'add-transaction' && 'Agrega una nueva transacción manualmente.'}
             </DialogDescription>
           </DialogHeader>
           
@@ -454,11 +495,11 @@ const AccountDetails = () => {
           )}
           
           {dialogType === 'deposit' && (
-            <TransactionForm onSubmit={handleDeposit} isDeposit={true} />
+            <SimpleTransactionForm onSubmit={handleDeposit} isDeposit={true} />
           )}
           
           {dialogType === 'withdraw' && (
-            <TransactionForm onSubmit={handleWithdraw} isDeposit={false} />
+            <SimpleTransactionForm onSubmit={handleWithdraw} isDeposit={false} />
           )}
           
           {dialogType === 'transfer' && (
@@ -466,6 +507,13 @@ const AccountDetails = () => {
               accounts={allAccounts.filter(acc => acc.id !== account.id)}
               fromAccountId={account.id}
               onSubmit={handleTransfer}
+              isLoading={isLoading}
+            />
+          )}
+          
+          {dialogType === 'add-transaction' && (
+            <TransactionForm
+              onSubmit={handleAddTransaction}
               isLoading={isLoading}
             />
           )}

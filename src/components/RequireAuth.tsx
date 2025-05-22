@@ -5,10 +5,9 @@ import { useAuth } from '@/contexts/AuthContext';
 
 interface RequireAuthProps {
   children: React.ReactNode;
-  adminOnly?: boolean;
 }
 
-const RequireAuth: React.FC<RequireAuthProps> = ({ children, adminOnly = false }) => {
+const RequireAuth: React.FC<RequireAuthProps> = ({ children }) => {
   // En modo demostración, simulamos un usuario autenticado
   const demoUser = {
     id: "demo-user-1",
@@ -18,15 +17,6 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children, adminOnly = false }
     createdAt: new Date().toISOString()
   };
 
-  // Para un usuario administrador descomentar esta línea y comentar la anterior
-  // const demoUser = {
-  //   id: "demo-admin-1", 
-  //   name: "Administrador Demo", 
-  //   email: "admin@ejemplo.com", 
-  //   role: "admin",
-  //   createdAt: new Date().toISOString()
-  // };
-
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -34,15 +24,11 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children, adminOnly = false }
   useEffect(() => {
     // Si estuviéramos en producción, mantendríamos este código activo
     /*
-    if (!loading) {
-      if (!user) {
-        navigate('/login');
-      } else if (adminOnly && user.role !== 'admin') {
-        navigate('/dashboard');
-      }
+    if (!loading && !user) {
+      navigate('/login');
     }
     */
-  }, [user, loading, adminOnly, navigate]);
+  }, [user, loading, navigate]);
 
   if (loading) {
     return (

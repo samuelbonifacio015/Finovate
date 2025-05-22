@@ -1,12 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Transaction, Account } from '@/types/finance';
 import { formatCurrency, formatDate } from '@/utils/formatters';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
+import { TrashIcon, Search } from 'lucide-react';
+import { deleteTransaction } from '@/services/financeService';
 
 interface TransactionListProps {
   transactions: Transaction[];
-  accounts: Account[]; // Para obtener nombres de cuentas en transferencias
-  currentAccountId?: string; // ID de la cuenta actual para determinar dirección en transferencias
+  accounts: Account[];
+  currentAccountId?: string;
+  onTransactionDeleted?: () => void;
 }
 
 // Función para obtener el icono según el tipo de transacción
@@ -37,10 +43,27 @@ const getTransactionType = (transaction: Transaction) => {
   }
 };
 
-const TransactionList: React.FC<TransactionListProps> = ({ transactions, accounts, currentAccountId }) => {
+const TransactionList: React.FC<TransactionListProps> = ({ 
+  transactions, 
+  accounts, 
+  currentAccountId,
+  onTransactionDeleted
+}) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Filtrar transacciones por ID personalizado o descripción
+  const filteredTransactions = transactions.filter(tx => 
+    tx.customId.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    tx.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Ordenar transacciones por fecha, más reciente primero
-  const sortedTransactions = [...transactions].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  const sortedTransactions = [...filteredTransactions].sort(
+    (a, b) => {
+      const dateA = new Date(`${a.date}T${a.time}`).getTime();
+      const dateB = new Date(`${b.date}T${b.time}`).getTime();
+      return dateB - dateA;
+    }
   );
 
   const getAccountName = (accountId: string): string => {
@@ -99,20 +122,45 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactions, account
     return formatCurrency(transaction.amount, currency);
   };
 
+  const handleDeleteTransaction = (id: string) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta transacción? Esta acción revertirá el efecto en el saldo de la cuenta.')) {
+      try {
+        deleteTransaction(id);
+        if (onTransactionDeleted) {
+          onTransactionDeleted();
+        }
+      } catch (error) {
+        console.error("Error al eliminar la transacción:", error);
+        toast.error("No se pudo eliminar la transacción");
+      }
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-border">
-      <h3 className="font-semibold text-lg p-4 border-b">
-        Historial de Transacciones
-      </h3>
+      <div className="p-4 border-b">
+        <h3 className="font-semibold text-lg mb-3">
+          Historial de Transacciones
+        </h3>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Buscar por ID o descripción..."
+            className="pl-9"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
       
       {sortedTransactions.length === 0 ? (
         <div className="p-8 text-center text-muted-foreground">
-          No hay transacciones para mostrar.
+          {searchTerm ? 'No se encontraron transacciones que coincidan con la búsqueda.' : 'No hay transacciones para mostrar.'}
         </div>
       ) : (
         <div className="divide-y">
           {sortedTransactions.map((transaction) => (
-            <div key={transaction.id} className="transaction-item">
+            <div key={transaction.id} className="p-4 flex justify-between items-start hover:bg-muted/20">
               <div className="flex items-center">
                 <div className="mr-3">
                   {getTransactionIcon(transaction)}
@@ -121,11 +169,11 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactions, account
                   <div className="font-medium">
                     {transaction.description}
                   </div>
-                  <div className="text-xs text-muted-foreground flex items-center gap-2">
+                  <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-2">
                     <span>{getTransactionType(transaction)}</span>
                     {transaction.relatedAccountId && (
                       <>
-                        <span>•</span>
+                        <span className="inline-block">•</span>
                         <span>
                           {transaction.accountId === currentAccountId 
                             ? `A: ${getAccountName(transaction.relatedAccountId)}` 
@@ -133,13 +181,27 @@ const TransactionList: React.FC<TransactionListProps> = ({ transactions, account
                         </span>
                       </>
                     )}
-                    <span>•</span>
-                    <span>{formatDate(transaction.date)}</span>
+                    <span className="inline-block">•</span>
+                    <span>{transaction.date} {transaction.time.substring(0, 5)}</span>
+                    <span className="inline-block">•</span>
+                    <span className="text-xs bg-slate-100 rounded px-2 py-0.5">
+                      ID: {transaction.customId}
+                    </span>
                   </div>
                 </div>
               </div>
-              <div className={getAmountClass(transaction)}>
-                {getFormattedAmount(transaction)}
+              <div className="flex items-center gap-2">
+                <div className={getAmountClass(transaction)}>
+                  {getFormattedAmount(transaction)}
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                  onClick={() => handleDeleteTransaction(transaction.id)}
+                >
+                  <TrashIcon size={16} />
+                </Button>
               </div>
             </div>
           ))}

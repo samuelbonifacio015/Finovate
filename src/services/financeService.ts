@@ -1,5 +1,5 @@
 
-import { Account, AccountType, Transaction, TransactionType, TransferData } from '../types/finance';
+import { Account, AccountType, Transaction, TransactionType, TransferData, TransactionFormData } from '../types/finance';
 import { getCurrentUser } from './authService';
 import { toast } from 'sonner';
 
@@ -15,12 +15,8 @@ export const getAccounts = (): Account[] => {
     
     if (!currentUser) return [];
     
-    // Filtrar por usuario actual a menos que sea administrador
-    if (currentUser.role === 'admin') {
-      return accounts;
-    } else {
-      return accounts.filter((account: Account) => account.userId === currentUser.id);
-    }
+    // Filtrar por usuario actual
+    return accounts.filter((account: Account) => account.userId === currentUser.id);
   } catch (error) {
     console.error('Error al obtener cuentas:', error);
     return [];
@@ -71,7 +67,7 @@ export const updateAccount = (id: string, updates: Partial<Account>): Account =>
   
   // Verificar permiso
   const currentUser = getCurrentUser();
-  if (!currentUser || (currentUser.role !== 'admin' && allAccounts[accountIndex].userId !== currentUser.id)) {
+  if (!currentUser || allAccounts[accountIndex].userId !== currentUser.id) {
     toast.error('No tienes permiso para modificar esta cuenta');
     throw new Error('Permiso denegado');
   }
@@ -101,7 +97,7 @@ export const deleteAccount = (id: string): boolean => {
   
   // Verificar permiso
   const currentUser = getCurrentUser();
-  if (!currentUser || (currentUser.role !== 'admin' && account.userId !== currentUser.id)) {
+  if (!currentUser || account.userId !== currentUser.id) {
     toast.error('No tienes permiso para eliminar esta cuenta');
     throw new Error('Permiso denegado');
   }
@@ -119,6 +115,20 @@ export const deleteAccount = (id: string): boolean => {
   
   toast.success('Cuenta eliminada');
   return true;
+};
+
+// Generar un ID personalizado único para transacciones
+export const generateCustomTransactionId = (): string => {
+  const prefix = 'TX';
+  const timestamp = new Date().getTime().toString().slice(-6);
+  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+  return `${prefix}-${timestamp}-${random}`;
+};
+
+// Buscar transacción por ID personalizado
+export const findTransactionByCustomId = (customId: string): Transaction | undefined => {
+  const allTransactions = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY) || '[]');
+  return allTransactions.find((tx: Transaction) => tx.customId === customId);
 };
 
 // Obtener transacciones de una cuenta
@@ -145,6 +155,9 @@ export const createTransaction = (
   type: TransactionType, 
   amount: number, 
   description: string,
+  customId: string = generateCustomTransactionId(),
+  date: string = new Date().toISOString().split('T')[0],
+  time: string = new Date().toTimeString().split(' ')[0],
   relatedAccountId?: string
 ): Transaction => {
   const account = getAccountById(accountId);
@@ -156,7 +169,7 @@ export const createTransaction = (
   
   // Verificar permiso
   const currentUser = getCurrentUser();
-  if (!currentUser || (currentUser.role !== 'admin' && account.userId !== currentUser.id)) {
+  if (!currentUser || account.userId !== currentUser.id) {
     toast.error('No tienes permiso para esta operación');
     throw new Error('Permiso denegado');
   }
@@ -167,14 +180,22 @@ export const createTransaction = (
     throw new Error('Saldo insuficiente');
   }
   
+  // Verificar si el ID personalizado ya existe
+  if (findTransactionByCustomId(customId)) {
+    toast.error('El ID de transacción ya existe');
+    throw new Error('ID duplicado');
+  }
+  
   // Crear la transacción
   const newTransaction: Transaction = {
     id: `tx_${Math.random().toString(36).substring(2, 10)}`,
+    customId,
     accountId,
     type,
     amount,
     description,
-    date: new Date().toISOString(),
+    date,
+    time,
     relatedAccountId,
   };
   
@@ -196,6 +217,49 @@ export const createTransaction = (
   return newTransaction;
 };
 
+// Eliminar una transacción
+export const deleteTransaction = (id: string): boolean => {
+  const allTransactions = JSON.parse(localStorage.getItem(TRANSACTIONS_KEY) || '[]');
+  const transaction = allTransactions.find((tx: Transaction) => tx.id === id);
+  
+  if (!transaction) {
+    toast.error('Transacción no encontrada');
+    throw new Error('Transacción no encontrada');
+  }
+  
+  const account = getAccountById(transaction.accountId);
+  
+  if (!account) {
+    toast.error('Cuenta asociada no encontrada');
+    throw new Error('Cuenta no encontrada');
+  }
+  
+  // Verificar permiso
+  const currentUser = getCurrentUser();
+  if (!currentUser || account.userId !== currentUser.id) {
+    toast.error('No tienes permiso para eliminar esta transacción');
+    throw new Error('Permiso denegado');
+  }
+  
+  // Revertir el efecto en el balance de la cuenta
+  let newBalance = account.balance;
+  if (transaction.type === 'deposit') {
+    newBalance -= transaction.amount;
+  } else if (transaction.type === 'withdrawal' || transaction.type === 'transfer') {
+    newBalance += transaction.amount;
+  }
+  
+  // Actualizar la cuenta
+  updateAccount(transaction.accountId, { balance: newBalance });
+  
+  // Eliminar la transacción
+  const updatedTransactions = allTransactions.filter((tx: Transaction) => tx.id !== id);
+  localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(updatedTransactions));
+  
+  toast.success('Transacción eliminada');
+  return true;
+};
+
 // Realizar una transferencia entre cuentas
 export const transferFunds = (transferData: TransferData): { fromTransaction: Transaction; toTransaction: Transaction } => {
   const { fromAccountId, toAccountId, amount, description } = transferData;
@@ -215,7 +279,7 @@ export const transferFunds = (transferData: TransferData): { fromTransaction: Tr
   
   // Verificar permiso
   const currentUser = getCurrentUser();
-  if (!currentUser || (currentUser.role !== 'admin' && fromAccount.userId !== currentUser.id)) {
+  if (!currentUser || fromAccount.userId !== currentUser.id) {
     toast.error('No tienes permiso para esta operación');
     throw new Error('Permiso denegado');
   }
@@ -226,12 +290,18 @@ export const transferFunds = (transferData: TransferData): { fromTransaction: Tr
     throw new Error('Saldo insuficiente');
   }
   
+  // Generar un ID personalizado compartido para ambas transacciones de la transferencia
+  const sharedCustomId = generateCustomTransactionId();
+  
   // Crear transacción de retiro
   const fromTransaction = createTransaction(
     fromAccountId,
     'transfer',
     amount,
     `Transferencia a ${toAccount.name}: ${description}`,
+    `${sharedCustomId}-OUT`,
+    new Date().toISOString().split('T')[0],
+    new Date().toTimeString().split(' ')[0],
     toAccountId
   );
   
@@ -241,6 +311,9 @@ export const transferFunds = (transferData: TransferData): { fromTransaction: Tr
     'deposit',
     amount,
     `Transferencia de ${fromAccount.name}: ${description}`,
+    `${sharedCustomId}-IN`,
+    new Date().toISOString().split('T')[0],
+    new Date().toTimeString().split(' ')[0],
     fromAccountId
   );
   
@@ -274,17 +347,7 @@ export const initializeExampleData = () => {
         name: 'Cuenta de Ahorros',
         type: 'savings',
         balance: 15000,
-        currency: 'USD',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: 'acc_admin_checking',
-        userId: '2', // ID del administrador
-        name: 'Cuenta Principal',
-        type: 'checking',
-        balance: 5000,
-        currency: 'USD',
+        currency: 'PEN',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -298,36 +361,44 @@ export const initializeExampleData = () => {
     const exampleTransactions: Transaction[] = [
       {
         id: 'tx_1',
+        customId: 'TX-001001',
         accountId: 'acc_user_checking',
         type: 'deposit',
         amount: 1000,
         description: 'Depósito inicial',
-        date: new Date(now.getTime() - 7 * oneDay).toISOString(),
+        date: new Date(now.getTime() - 7 * oneDay).toISOString().split('T')[0],
+        time: '10:30:00',
       },
       {
         id: 'tx_2',
+        customId: 'TX-001002',
         accountId: 'acc_user_checking',
         type: 'withdrawal',
         amount: 50,
         description: 'Retiro cajero automático',
-        date: new Date(now.getTime() - 5 * oneDay).toISOString(),
+        date: new Date(now.getTime() - 5 * oneDay).toISOString().split('T')[0],
+        time: '15:45:00',
       },
       {
         id: 'tx_3',
+        customId: 'TX-001003-OUT',
         accountId: 'acc_user_checking',
         type: 'transfer',
         amount: 500,
         description: 'Transferencia a ahorros',
-        date: new Date(now.getTime() - 2 * oneDay).toISOString(),
+        date: new Date(now.getTime() - 2 * oneDay).toISOString().split('T')[0],
+        time: '09:15:00',
         relatedAccountId: 'acc_user_savings',
       },
       {
         id: 'tx_4',
+        customId: 'TX-001003-IN',
         accountId: 'acc_user_savings',
         type: 'deposit',
         amount: 500,
         description: 'Transferencia desde cuenta corriente',
-        date: new Date(now.getTime() - 2 * oneDay).toISOString(),
+        date: new Date(now.getTime() - 2 * oneDay).toISOString().split('T')[0],
+        time: '09:15:00',
         relatedAccountId: 'acc_user_checking',
       },
     ];

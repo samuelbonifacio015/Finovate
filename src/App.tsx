@@ -12,7 +12,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import AccountDetails from "./pages/AccountDetails";
-import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,7 +36,6 @@ const App = () => (
             {/* No requerimos autenticación para propósitos de demostración */}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/accounts/:id" element={<AccountDetails />} />
-            <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
