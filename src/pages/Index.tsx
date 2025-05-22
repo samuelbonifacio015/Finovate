@@ -1,12 +1,83 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Navigation from '@/components/Navigation';
-import { ArrowRight, CreditCard, BarChart, Wallet } from 'lucide-react';
+import { ArrowRight, CreditCard, BarChart, Wallet, BookOpen, PiggyBank, Coins, Calculator } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
+  const [userProfile] = useState('ahorrador'); // Simulación de perfil: 'ahorrador', 'inversor', 'deudor'
+
+  // Contenido educativo personalizado basado en el perfil del usuario
+  const educationalContent = {
+    ahorrador: [
+      {
+        title: "Estrategias de ahorro efectivas",
+        description: "Aprende a crear un fondo de emergencia y establecer metas de ahorro realistas.",
+        icon: <PiggyBank className="h-10 w-10 text-blue-500" />,
+        type: "article"
+      },
+      {
+        title: "Presupuesto inteligente",
+        description: "Técnicas para hacer seguimiento de tus gastos y maximizar tu capacidad de ahorro.",
+        icon: <Calculator className="h-10 w-10 text-green-500" />,
+        type: "video"
+      },
+      {
+        title: "Automatiza tus ahorros",
+        description: "Configura transferencias automáticas para cumplir tus objetivos financieros sin esfuerzo.",
+        icon: <Wallet className="h-10 w-10 text-purple-500" />,
+        type: "tips"
+      }
+    ],
+    inversor: [
+      {
+        title: "Fundamentos de inversión",
+        description: "Conceptos básicos para comenzar tu camino como inversor.",
+        icon: <BarChart className="h-10 w-10 text-blue-500" />,
+        type: "article"
+      },
+      {
+        title: "Diversificación de cartera",
+        description: "Estrategias para distribuir tus inversiones y minimizar riesgos.",
+        icon: <Coins className="h-10 w-10 text-green-500" />,
+        type: "video"
+      },
+      {
+        title: "Inversiones a largo plazo",
+        description: "Cómo construir riqueza consistente con un enfoque paciente.",
+        icon: <PiggyBank className="h-10 w-10 text-purple-500" />,
+        type: "tips"
+      }
+    ],
+    deudor: [
+      {
+        title: "Plan para eliminar deudas",
+        description: "Métodos probados para reducir tus deudas de manera sistemática.",
+        icon: <CreditCard className="h-10 w-10 text-blue-500" />,
+        type: "article"
+      },
+      {
+        title: "Refinanciamiento inteligente",
+        description: "Cuándo y cómo refinanciar préstamos para ahorrar en intereses.",
+        icon: <Calculator className="h-10 w-10 text-green-500" />,
+        type: "video"
+      },
+      {
+        title: "Mejora tu puntaje crediticio",
+        description: "Acciones concretas para mejorar tu historial crediticio.",
+        icon: <BarChart className="h-10 w-10 text-purple-500" />,
+        type: "tips"
+      }
+    ]
+  };
+
+  // Seleccionar contenido basado en el perfil del usuario
+  const personalizedContent = educationalContent[userProfile] || educationalContent.ahorrador;
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -139,6 +210,163 @@ const Index = () => {
                 className="gap-2 text-base"
               >
                 Explorar la Demostración <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Educación Financiera Personalizada */}
+        <div className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Educación Financiera Personalizada
+              </h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Contenido adaptado a tu perfil financiero para ayudarte a tomar mejores decisiones con tu dinero.
+              </p>
+            </div>
+
+            <Tabs defaultValue="article" className="w-full max-w-4xl mx-auto">
+              <div className="flex justify-center mb-8">
+                <TabsList className="grid grid-cols-3 w-[400px]">
+                  <TabsTrigger value="article">Artículos</TabsTrigger>
+                  <TabsTrigger value="video">Videos</TabsTrigger>
+                  <TabsTrigger value="tips">Consejos</TabsTrigger>
+                </TabsList>
+              </div>
+
+              <TabsContent value="article" className="mt-0">
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {personalizedContent.filter(item => item.type === "article").map((item, index) => (
+                      <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-4">
+                        <Card className="h-full">
+                          <CardHeader>
+                            <div className="flex justify-center mb-4">
+                              {item.icon}
+                            </div>
+                            <CardTitle>{item.title}</CardTitle>
+                            <CardDescription>{item.description}</CardDescription>
+                          </CardHeader>
+                          <CardFooter>
+                            <Button className="w-full" variant="outline">Leer más</Button>
+                          </CardFooter>
+                        </Card>
+                      </CarouselItem>
+                    ))}
+                    <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-4">
+                      <Card className="h-full border border-dashed border-gray-300 bg-gray-50/50">
+                        <CardHeader>
+                          <div className="flex justify-center mb-4">
+                            <BookOpen className="h-10 w-10 text-gray-400" />
+                          </div>
+                          <CardTitle className="text-gray-500">Más artículos</CardTitle>
+                          <CardDescription>Descubre nuestra biblioteca completa de recursos financieros.</CardDescription>
+                        </CardHeader>
+                        <CardFooter>
+                          <Button className="w-full">Ver biblioteca</Button>
+                        </CardFooter>
+                      </Card>
+                    </CarouselItem>
+                  </CarouselContent>
+                  <div className="flex justify-center mt-8">
+                    <CarouselPrevious className="static translate-y-0 mr-2" />
+                    <CarouselNext className="static translate-y-0" />
+                  </div>
+                </Carousel>
+              </TabsContent>
+
+              <TabsContent value="video" className="mt-0">
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {personalizedContent.filter(item => item.type === "video").map((item, index) => (
+                      <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-4">
+                        <Card className="h-full">
+                          <CardHeader>
+                            <div className="flex justify-center mb-4">
+                              {item.icon}
+                            </div>
+                            <CardTitle>{item.title}</CardTitle>
+                            <CardDescription>{item.description}</CardDescription>
+                          </CardHeader>
+                          <CardFooter>
+                            <Button className="w-full" variant="outline">Ver video</Button>
+                          </CardFooter>
+                        </Card>
+                      </CarouselItem>
+                    ))}
+                    <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-4">
+                      <Card className="h-full border border-dashed border-gray-300 bg-gray-50/50">
+                        <CardHeader>
+                          <div className="flex justify-center mb-4">
+                            <BookOpen className="h-10 w-10 text-gray-400" />
+                          </div>
+                          <CardTitle className="text-gray-500">Más videos</CardTitle>
+                          <CardDescription>Explora nuestra colección completa de videos educativos.</CardDescription>
+                        </CardHeader>
+                        <CardFooter>
+                          <Button className="w-full">Ver colección</Button>
+                        </CardFooter>
+                      </Card>
+                    </CarouselItem>
+                  </CarouselContent>
+                  <div className="flex justify-center mt-8">
+                    <CarouselPrevious className="static translate-y-0 mr-2" />
+                    <CarouselNext className="static translate-y-0" />
+                  </div>
+                </Carousel>
+              </TabsContent>
+
+              <TabsContent value="tips" className="mt-0">
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {personalizedContent.filter(item => item.type === "tips").map((item, index) => (
+                      <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3 pl-4">
+                        <Card className="h-full">
+                          <CardHeader>
+                            <div className="flex justify-center mb-4">
+                              {item.icon}
+                            </div>
+                            <CardTitle>{item.title}</CardTitle>
+                            <CardDescription>{item.description}</CardDescription>
+                          </CardHeader>
+                          <CardFooter>
+                            <Button className="w-full" variant="outline">Ver consejos</Button>
+                          </CardFooter>
+                        </Card>
+                      </CarouselItem>
+                    ))}
+                    <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-4">
+                      <Card className="h-full border border-dashed border-gray-300 bg-gray-50/50">
+                        <CardHeader>
+                          <div className="flex justify-center mb-4">
+                            <BookOpen className="h-10 w-10 text-gray-400" />
+                          </div>
+                          <CardTitle className="text-gray-500">Más consejos</CardTitle>
+                          <CardDescription>Accede a todos nuestros consejos prácticos para mejorar tus finanzas.</CardDescription>
+                        </CardHeader>
+                        <CardFooter>
+                          <Button className="w-full">Ver todos</Button>
+                        </CardFooter>
+                      </Card>
+                    </CarouselItem>
+                  </CarouselContent>
+                  <div className="flex justify-center mt-8">
+                    <CarouselPrevious className="static translate-y-0 mr-2" />
+                    <CarouselNext className="static translate-y-0" />
+                  </div>
+                </Carousel>
+              </TabsContent>
+            </Tabs>
+
+            <div className="mt-12 text-center">
+              <p className="text-gray-600 mb-6">¿Quieres recibir contenido personalizado en tu correo?</p>
+              <Button 
+                size="lg"
+                className="gap-2 text-base"
+              >
+                Suscríbete a nuestro boletín <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
