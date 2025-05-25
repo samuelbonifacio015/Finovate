@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Navigation from '@/components/Navigation';
-import { ArrowRight, CreditCard, BarChart, Wallet, BookOpen, PiggyBank, Coins, Calculator } from 'lucide-react';
+import SavingsGamification from '@/components/SavingsGamification';
+import { ArrowRight, CreditCard, BarChart, Wallet, BookOpen, PiggyBank, Coins, Calculator, Trophy, Target, Gamepad2 } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -177,7 +178,7 @@ const Index = () => {
               Tu dinero bajo control
             </h2>
             
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-4 gap-8">
               <div className="p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all text-center">
                 <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-4">
                   <Wallet className="h-7 w-7" />
@@ -201,6 +202,14 @@ const Index = () => {
                 <h3 className="font-semibold text-xl mb-3">Analítica Detallada</h3>
                 <p className="text-gray-600">Visualiza tus finanzas con gráficos y estadísticas de fácil interpretación.</p>
               </div>
+
+              <div className="p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all text-center">
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 mb-4">
+                  <Trophy className="h-7 w-7" />
+                </div>
+                <h3 className="font-semibold text-xl mb-3">Gamificación</h3>
+                <p className="text-gray-600">Alcanza metas, completa desafíos y gana recompensas por mejorar tus finanzas.</p>
+              </div>
             </div>
             
             <div className="mt-12 text-center">
@@ -210,6 +219,37 @@ const Index = () => {
                 className="gap-2 text-base"
               >
                 Explorar la Demostración <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Gamificación del Ahorro */}
+        <div className="py-16 bg-gradient-to-br from-blue-50 to-purple-50">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white mb-6">
+                <Gamepad2 className="h-8 w-8" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Gamificación del Ahorro
+              </h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Convierte el ahorro en un juego divertido. Completa desafíos, alcanza metas y desbloquea logros mientras mejoras tus hábitos financieros.
+              </p>
+            </div>
+
+            <SavingsGamification />
+
+            <div className="mt-12 text-center">
+              <p className="text-gray-600 mb-6">¿Listo para comenzar tu aventura financiera?</p>
+              <Button 
+                size="lg"
+                className="gap-2 text-base bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                onClick={() => navigate('/dashboard')}
+              >
+                <Target className="h-5 w-5" />
+                Comenzar Desafíos
               </Button>
             </div>
           </div>
