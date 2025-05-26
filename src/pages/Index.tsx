@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Navigation from '@/components/Navigation';
 import SavingsGamification from '@/components/SavingsGamification';
+import ChatButton from '@/components/ChatButton';
 import { ArrowRight, CreditCard, BarChart, Wallet, BookOpen, PiggyBank, Coins, Calculator, Trophy, Target, Gamepad2 } from 'lucide-react';
 
 const Index = () => {
@@ -421,6 +422,9 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Asistente Virtual Financiero */}
+      <ChatButton />
     </div>
   );
 };
