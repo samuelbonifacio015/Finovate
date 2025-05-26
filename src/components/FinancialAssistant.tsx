@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -103,78 +102,76 @@ const FinancialAssistant: React.FC<FinancialAssistantProps> = ({ isOpen, onClose
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-2xl h-[600px] flex flex-col">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
-          <CardTitle className="flex items-center gap-2">
-            <Bot className="h-6 w-6" />
-            Asistente Financiero
-          </CardTitle>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onClose}
-            className="text-white hover:bg-white/20"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </CardHeader>
-        
-        <CardContent className="flex-1 flex flex-col p-0">
-          <ScrollArea className="flex-1 p-4">
-            <div className="space-y-4">
-              {messages.map((message) => (
+    <Card className="fixed bottom-20 right-6 w-80 h-96 flex flex-col shadow-xl z-50 border border-gray-200">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
+        <CardTitle className="flex items-center gap-2 text-sm">
+          <Bot className="h-4 w-4" />
+          Asistente Financiero
+        </CardTitle>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onClose}
+          className="text-white hover:bg-white/20 h-6 w-6"
+        >
+          <X className="h-3 w-3" />
+        </Button>
+      </CardHeader>
+      
+      <CardContent className="flex-1 flex flex-col p-0">
+        <ScrollArea className="flex-1 p-3">
+          <div className="space-y-3">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
                 <div
-                  key={message.id}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`max-w-[85%] p-2 rounded-lg text-xs ${
+                    message.sender === 'user'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-900'
+                  }`}
                 >
-                  <div
-                    className={`max-w-[80%] p-3 rounded-lg ${
-                      message.sender === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-100 text-gray-900'
-                    }`}
-                  >
-                    <p className="text-sm">{message.content}</p>
-                    <span className="text-xs opacity-70 mt-1 block">
-                      {message.timestamp.toLocaleTimeString()}
-                    </span>
+                  <p>{message.content}</p>
+                  <span className="text-xs opacity-70 mt-1 block">
+                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              </div>
+            ))}
+            
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 text-gray-900 p-2 rounded-lg">
+                  <div className="flex space-x-1">
+                    <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce"></div>
+                    <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
                 </div>
-              ))}
-              
-              {isTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 text-gray-900 p-3 rounded-lg">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-          </ScrollArea>
-          
-          <div className="border-t p-4">
-            <div className="flex gap-2">
-              <Input
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Escribe tu consulta financiera..."
-                className="flex-1"
-              />
-              <Button onClick={handleSendMessage} disabled={!inputMessage.trim()}>
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </ScrollArea>
+        
+        <div className="border-t p-3">
+          <div className="flex gap-2">
+            <Input
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Escribe tu consulta..."
+              className="flex-1 text-xs h-8"
+            />
+            <Button onClick={handleSendMessage} disabled={!inputMessage.trim()} size="sm" className="h-8">
+              <Send className="h-3 w-3" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
