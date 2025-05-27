@@ -378,9 +378,11 @@ const Profile: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  {menuItems.find(item => item.id === activeSection)?.icon && (
-                    <menuItems.find(item => item.id === activeSection)!.icon className="h-5 w-5" />
-                  )}
+                  {(() => {
+                    const activeItem = menuItems.find(item => item.id === activeSection);
+                    const IconComponent = activeItem?.icon;
+                    return IconComponent ? <IconComponent className="h-5 w-5" /> : null;
+                  })()}
                   {menuItems.find(item => item.id === activeSection)?.label}
                 </CardTitle>
               </CardHeader>
