@@ -1,220 +1,166 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import Navigation from '@/components/Navigation';
-import AccountCard from '@/components/AccountCard';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import AccountForm from '@/components/AccountForm';
-import TransferForm from '@/components/TransferForm';
-import { Account } from '@/types/finance';
-import { getAccounts, createAccount, deleteAccount, initializeExampleData, transferFunds } from '@/services/financeService';
-import { formatCurrency } from '@/utils/formatters';
-import { toast } from 'sonner';
+import Navigation from '@/components/Navigation';
+import FinancialStats from '@/components/FinancialStats';
+import MonthlyEvolutionChart from '@/components/MonthlyEvolutionChart';
+import ExpenseCategoriesChart from '@/components/ExpenseCategoriesChart';
+import BudgetAlerts from '@/components/BudgetAlerts';
+import ChatButton from '@/components/ChatButton';
+import { useAuth } from '@/contexts/AuthContext';
+import { initializeData } from '@/services/financeService';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [totalBalance, setTotalBalance] = useState(0);
-  const [dialogType, setDialogType] = useState<'create-account' | 'transfer'>('create-account');
 
-  // Cargar cuentas
-  const loadAccounts = () => {
-    const userAccounts = getAccounts();
-    setAccounts(userAccounts);
-    
-    // Calcular balance total
-    const total = userAccounts.reduce((sum, account) => sum + account.balance, 0);
-    setTotalBalance(total);
-  };
-  
   useEffect(() => {
     if (!user) {
       navigate('/login');
       return;
     }
     
-    // Inicializar datos de ejemplo si es necesario
-    initializeExampleData();
-    
-    // Cargar cuentas
-    loadAccounts();
+    // Inicializar datos de ejemplo
+    initializeData();
   }, [user, navigate]);
-  
-  const handleCreateAccount = async (data: Omit<Account, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
-    setIsLoading(true);
-    try {
-      createAccount(data);
-      setIsDialogOpen(false);
-      loadAccounts();
-      toast.success('Cuenta creada exitosamente');
-    } catch (error) {
-      console.error('Error al crear cuenta:', error);
-      toast.error('Error al crear la cuenta');
-    } finally {
-      setIsLoading(false);
+
+  // Datos de ejemplo para el dashboard
+  const monthlyData = [
+    { month: 'Ene', ingresos: 3500, gastos: 2800, ahorros: 700 },
+    { month: 'Feb', ingresos: 3200, gastos: 2650, ahorros: 550 },
+    { month: 'Mar', ingresos: 3800, gastos: 3100, ahorros: 700 },
+    { month: 'Abr', ingresos: 3600, gastos: 2900, ahorros: 700 },
+    { month: 'May', ingresos: 3900, gastos: 3200, ahorros: 700 },
+    { month: 'Jun', ingresos: 3700, gastos: 3000, ahorros: 700 },
+  ];
+
+  const categoryData = [
+    { category: 'Alimentación', amount: 800, color: '#ef4444', percentage: 35 },
+    { category: 'Transporte', amount: 400, color: '#f97316', percentage: 17 },
+    { category: 'Entretenimiento', amount: 300, color: '#eab308', percentage: 13 },
+    { category: 'Servicios', amount: 500, color: '#22c55e', percentage: 22 },
+    { category: 'Otros', amount: 300, color: '#3b82f6', percentage: 13 },
+  ];
+
+  const budgetAlerts = [
+    {
+      id: '1',
+      category: 'Alimentación',
+      budgetAmount: 900,
+      spentAmount: 850,
+      percentage: 94,
+      status: 'warning' as const
+    },
+    {
+      id: '2',
+      category: 'Entretenimiento',
+      budgetAmount: 250,
+      spentAmount: 300,
+      percentage: 120,
+      status: 'danger' as const
+    },
+    {
+      id: '3',
+      category: 'Transporte',
+      budgetAmount: 500,
+      spentAmount: 350,
+      percentage: 70,
+      status: 'safe' as const
     }
-  };
-  
-  const handleDeleteAccount = async (accountId: string) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar esta cuenta? Esta acción no se puede deshacer.')) {
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      deleteAccount(accountId);
-      loadAccounts();
-      toast.success('Cuenta eliminada exitosamente');
-    } catch (error) {
-      console.error('Error al eliminar cuenta:', error);
-      toast.error('Error al eliminar la cuenta');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  const handleTransfer = async (data: { fromAccountId: string; toAccountId: string; amount: number; description: string }) => {
-    setIsLoading(true);
-    try {
-      transferFunds(data);
-      setIsDialogOpen(false);
-      loadAccounts();
-      toast.success('Transferencia realizada exitosamente');
-    } catch (error) {
-      console.error('Error al realizar transferencia:', error);
-      toast.error('Error al realizar la transferencia');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navigation />
       
-      <main className="flex-grow bg-muted/30">
+      <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-finance-primary">Mi Dashboard</h1>
-              <p className="text-muted-foreground">
-                Bienvenido, {user?.name}. Gestiona tus finanzas personales.
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setDialogType('transfer');
-                  setIsDialogOpen(true);
-                }}
-                disabled={accounts.length < 2}
-              >
-                Realizar Transferencia
-              </Button>
-              
-              <Button 
-                onClick={() => {
-                  setDialogType('create-account');
-                  setIsDialogOpen(true);
-                }}
-              >
-                Nueva Cuenta
-              </Button>
-            </div>
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard Financiero</h1>
+            <p className="text-gray-600 mt-2">Resumen completo de tu situación financiera</p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="stat-card bg-gradient-to-br from-finance-primary to-finance-primary/90 text-white">
-              <p className="text-sm text-white/80">Balance Total</p>
-              <p className="text-3xl font-bold">{formatCurrency(totalBalance)}</p>
-              <p className="text-xs mt-2">Actualizado: {new Date().toLocaleDateString()}</p>
-            </div>
+
+          {/* Estadísticas principales */}
+          <FinancialStats
+            totalIncome={3700}
+            totalExpenses={3000}
+            savings={700}
+            monthlyBudget={3500}
+            budgetUsed={3000}
+            goalsProgress={68}
+          />
+
+          {/* Gráficos y análisis */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <MonthlyEvolutionChart data={monthlyData} />
+            <ExpenseCategoriesChart data={categoryData} />
+          </div>
+
+          {/* Alertas y acciones rápidas */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <BudgetAlerts alerts={budgetAlerts} />
             
-            <div className="stat-card">
-              <p className="text-sm text-muted-foreground">Total Cuentas</p>
-              <p className="text-3xl font-bold">{accounts.length}</p>
-              <div className="flex gap-2 mt-2">
-                <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                  Corriente: {accounts.filter(a => a.type === 'checking').length}
-                </span>
-                <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
-                  Ahorro: {accounts.filter(a => a.type === 'savings').length}
-                </span>
+            <Card>
+              <CardHeader>
+                <CardTitle>Acciones Rápidas</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  onClick={() => navigate('/accounts/demo-account')} 
+                  className="w-full justify-start"
+                  variant="outline"
+                >
+                  Ver Transacciones Detalladas
+                </Button>
+                <Button 
+                  onClick={() => navigate('/goals')} 
+                  className="w-full justify-start"
+                  variant="outline"
+                >
+                  Gestionar Metas Financieras
+                </Button>
+                <Button 
+                  onClick={() => navigate('/profile')} 
+                  className="w-full justify-start"
+                  variant="outline"
+                >
+                  Configurar Presupuestos
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Resumen de objetivos */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Resumen de Objetivos del Mes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-green-800">Ahorros</h4>
+                  <p className="text-2xl font-bold text-green-600">€700</p>
+                  <p className="text-sm text-green-600">Meta: €800 (87.5%)</p>
+                </div>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-800">Inversiones</h4>
+                  <p className="text-2xl font-bold text-blue-600">€500</p>
+                  <p className="text-sm text-blue-600">Meta: €500 (100%)</p>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-purple-800">Metas</h4>
+                  <p className="text-2xl font-bold text-purple-600">3 activas</p>
+                  <p className="text-sm text-purple-600">Progreso promedio: 68%</p>
+                </div>
               </div>
-            </div>
-            
-            <div className="stat-card">
-              <p className="text-sm text-muted-foreground">Última Actividad</p>
-              <p className="text-base font-medium mt-1">Sesión iniciada</p>
-              <p className="text-xs text-muted-foreground mt-1">{new Date().toLocaleString()}</p>
-            </div>
-          </div>
-          
-          {accounts.length === 0 ? (
-            <div className="bg-white p-12 rounded-lg border border-border text-center">
-              <h2 className="text-xl font-semibold mb-4">No tienes cuentas aún</h2>
-              <p className="text-muted-foreground mb-6">
-                Comienza creando tu primera cuenta para gestionar tus finanzas
-              </p>
-              <Button
-                onClick={() => {
-                  setDialogType('create-account');
-                  setIsDialogOpen(true);
-                }}
-              >
-                Crear Mi Primera Cuenta
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {accounts.map((account) => (
-                <AccountCard
-                  key={account.id}
-                  account={account}
-                  onDelete={() => handleDeleteAccount(account.id)}
-                />
-              ))}
-            </div>
-          )}
+            </CardContent>
+          </Card>
         </div>
       </main>
 
-      {/* Diálogo para crear cuenta o hacer transferencia */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>
-              {dialogType === 'create-account' ? 'Crear Nueva Cuenta' : 'Realizar Transferencia'}
-            </DialogTitle>
-            <DialogDescription>
-              {dialogType === 'create-account' 
-                ? 'Completa los detalles para crear una nueva cuenta bancaria.'
-                : 'Transfiere fondos entre tus cuentas.'}
-            </DialogDescription>
-          </DialogHeader>
-          
-          {dialogType === 'create-account' ? (
-            <AccountForm
-              onSubmit={handleCreateAccount}
-              isLoading={isLoading}
-            />
-          ) : (
-            <TransferForm
-              accounts={accounts}
-              onSubmit={handleTransfer}
-              isLoading={isLoading}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      <ChatButton />
     </div>
   );
 };
