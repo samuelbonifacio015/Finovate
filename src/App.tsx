@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,8 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import AccountDetails from "./pages/AccountDetails";
 import Profile from "./pages/Profile";
+
+const Goals = React.lazy(() => import('./pages/Goals'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,17 +33,19 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            {/* No requerimos autenticación para propósitos de demostración */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/accounts/:id" element={<AccountDetails />} />
-            <Route path="/profile" element={<Profile />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <React.Suspense fallback={<div>Cargando...</div>}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/accounts/:id" element={<AccountDetails />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/goals" element={<Goals />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </React.Suspense>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
