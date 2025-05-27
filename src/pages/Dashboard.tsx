@@ -10,7 +10,7 @@ import ExpenseCategoriesChart from '@/components/ExpenseCategoriesChart';
 import BudgetAlerts from '@/components/BudgetAlerts';
 import ChatButton from '@/components/ChatButton';
 import { useAuth } from '@/contexts/AuthContext';
-import { initializeData } from '@/services/financeService';
+import { initializeExampleData } from '@/services/financeService';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -23,7 +23,7 @@ const Dashboard = () => {
     }
     
     // Inicializar datos de ejemplo
-    initializeData();
+    initializeExampleData();
   }, [user, navigate]);
 
   // Datos de ejemplo para el dashboard
