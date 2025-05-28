@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,10 +11,10 @@ import TransferForm from '@/components/TransferForm';
 import { useAuth } from '@/contexts/AuthContext';
 import { Account, Transaction, TransactionFormData, TransferData } from '@/types/finance';
 import { 
-  getAllAccounts, 
-  getAllTransactions, 
+  getAccounts, 
+  getTransactions, 
   createTransaction, 
-  createTransfer 
+  transferFunds 
 } from '@/services/financeService';
 import { formatCurrency } from '@/utils/formatters';
 import { toast } from 'sonner';
@@ -40,8 +39,8 @@ const Transactions = () => {
   }, [user, navigate]);
 
   const loadData = () => {
-    const accountsData = getAllAccounts();
-    const transactionsData = getAllTransactions();
+    const accountsData = getAccounts();
+    const transactionsData = getTransactions();
     setAccounts(accountsData);
     setTransactions(transactionsData);
   };
@@ -56,10 +55,15 @@ const Transactions = () => {
         return;
       }
 
-      await createTransaction({
-        ...data,
-        accountId: defaultAccount.id
-      });
+      createTransaction(
+        defaultAccount.id,
+        data.type,
+        data.amount,
+        data.description,
+        data.customId,
+        data.date,
+        data.time
+      );
       
       loadData();
       setIsTransactionDialogOpen(false);
@@ -75,7 +79,7 @@ const Transactions = () => {
   const handleCreateTransfer = async (data: TransferData) => {
     setIsLoading(true);
     try {
-      await createTransfer(data);
+      transferFunds(data);
       loadData();
       setIsTransferDialogOpen(false);
       toast.success('Transferencia realizada exitosamente');
