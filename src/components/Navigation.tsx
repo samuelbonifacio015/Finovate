@@ -26,7 +26,8 @@ const Navigation: React.FC = () => {
   const isDashboard = location.pathname.includes('/dashboard') || 
                      location.pathname.includes('/accounts') ||
                      location.pathname.includes('/profile') ||
-                     location.pathname.includes('/goals');
+                     location.pathname.includes('/goals') ||
+                     location.pathname.includes('/transactions');
 
   const handleLogout = () => {
     logout();
@@ -41,6 +42,13 @@ const Navigation: React.FC = () => {
         onClick={onLinkClick}
       >
         Dashboard
+      </Link>
+      <Link 
+        to="/transactions" 
+        className={`hover:text-primary transition-colors text-base ${location.pathname === '/transactions' ? 'text-primary font-medium' : 'text-gray-600'}`}
+        onClick={onLinkClick}
+      >
+        Transacciones
       </Link>
       <Link 
         to="/accounts/demo-account" 
@@ -130,15 +138,15 @@ const Navigation: React.FC = () => {
       <div className="container mx-auto py-4 px-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-6">
-            {/* Mobile Menu */}
-            {isMobile && isDashboard && (
+            {/* Mobile Menu - Now shows for all screen sizes up to lg */}
+            {(isMobile || window.innerWidth <= 768) && isDashboard && (
               <Drawer>
                 <DrawerTrigger asChild>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="md:hidden lg:hidden">
                     <Menu className="h-5 w-5" />
                   </Button>
                 </DrawerTrigger>
-                <DrawerContent>
+                <DrawerContent className="max-w-sm">
                   <DrawerHeader>
                     <DrawerTitle>Navegación</DrawerTitle>
                     <DrawerDescription>
@@ -180,17 +188,17 @@ const Navigation: React.FC = () => {
               </span>
             </Link>
             
-            {/* Desktop Navigation */}
-            {!isMobile && isDashboard && (
-              <nav className="flex space-x-5">
+            {/* Desktop Navigation - Hidden on mobile and tablet */}
+            {!isMobile && window.innerWidth > 768 && isDashboard && (
+              <nav className="hidden lg:flex space-x-5">
                 <NavigationLinks />
               </nav>
             )}
           </div>
           
-          {/* Desktop Auth Buttons */}
-          {!isMobile && (
-            <div className="flex items-center space-x-4">
+          {/* Desktop Auth Buttons - Hidden on mobile */}
+          {!isMobile && window.innerWidth > 768 && (
+            <div className="hidden lg:flex items-center space-x-4">
               <AuthButtons />
             </div>
           )}

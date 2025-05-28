@@ -14,6 +14,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import AccountDetails from "./pages/AccountDetails";
 import Profile from "./pages/Profile";
+import Transactions from "./pages/Transactions";
 
 const Goals = React.lazy(() => import('./pages/Goals'));
 
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/transactions" element={<Transactions />} />
               <Route path="/accounts/:id" element={<AccountDetails />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/goals" element={<Goals />} />

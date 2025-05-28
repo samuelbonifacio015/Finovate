@@ -153,4 +153,26 @@
   .animate-scale-in {
     animation: scale-in 0.2s ease-out;
   }
+
+  /* Estilos para modales más pequeños */
+  .dialog-content-small {
+    @apply max-w-sm;
+  }
+
+  /* Responsive menu fixes */
+  @media (max-width: 768px) {
+    .mobile-menu-trigger {
+      @apply block;
+    }
+    
+    .desktop-nav {
+      @apply hidden;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .mobile-menu-trigger {
+      @apply block;
+    }
+  }
 }

@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +25,6 @@ const Dashboard = () => {
     initializeExampleData();
   }, [user, navigate]);
 
-  // Datos de ejemplo para el dashboard
   const monthlyData = [
     { month: 'Ene', ingresos: 3500, gastos: 2800, ahorros: 700 },
     { month: 'Feb', ingresos: 3200, gastos: 2650, ahorros: 550 },
@@ -107,6 +105,13 @@ const Dashboard = () => {
                 <CardTitle>Acciones Rápidas</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                <Button 
+                  onClick={() => navigate('/transactions')} 
+                  className="w-full justify-start"
+                  variant="outline"
+                >
+                  Gestionar Transacciones
+                </Button>
                 <Button 
                   onClick={() => navigate('/accounts/demo-account')} 
                   className="w-full justify-start"
