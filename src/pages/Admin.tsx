@@ -55,7 +55,6 @@ const Admin = () => {
       return;
     }
     
-    // Ya no verificamos si es administrador porque solo tenemos usuarios normales
     loadAccounts();
   }, [user, navigate]);
   
@@ -171,7 +170,6 @@ const Admin = () => {
                               variant="ghost"
                               size="sm"
                               onClick={() => {
-                                // En una aplicación real, podría navegar a una vista de detalle del usuario
                                 alert('En una aplicación real, mostraría el detalle del usuario');
                               }}
                             >

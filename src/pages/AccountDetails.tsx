@@ -59,7 +59,6 @@ const AccountDetails = () => {
       return;
     }
     
-    // Verificar permisos - removed role check since we only have 'user' now
     if (accountData.userId !== user?.id) {
       toast.error('No tienes permisos para ver esta cuenta');
       navigate('/dashboard');

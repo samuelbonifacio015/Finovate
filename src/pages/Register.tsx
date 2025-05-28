@@ -38,7 +38,6 @@ const Register = () => {
       navigate('/dashboard');
     } catch (error) {
       console.error('Error al registrarse:', error);
-      // El toast de error ya se muestra en el servicio de autenticación
     } finally {
       setIsLoading(false);
     }
