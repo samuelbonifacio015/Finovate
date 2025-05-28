@@ -1,73 +1,45 @@
-# Welcome to your Lovable project
+<p align="center"> <h1> Finovate </h1>
 
-## Project info
+<p align="center"><i>Finovate es una aplicación web diseñada para ayudar a los usuarios a gestionar sus finanzas personales. 
+El propósito principal de la aplicación es ofrecer a los usuarios un panel de control centralizado para rastrear ingresos, gastos, establecer presupuestos y obtener una visión clara de su salud financiera. </i></p>
 
-**URL**: https://lovable.dev/projects/136338c2-91f0-484d-a14e-70bf94291658
+## 💻 Tech Stack
 
-## How can I edit this code?
+<ul style="display: flex; flex-direction: column; gap:10px;">
+  <li style="vertical-align: middle;">
+    <img src="https://go-skill-icons.vercel.app/api/icons?i=react" alt="react" width="24" style="vertical-align: middle; margin-right: 4px;" /> React
+  </li>
+    <li style="vertical-align: middle;">
+    <img src="https://go-skill-icons.vercel.app/api/icons?i=typescript" alt="typescript" width="20" style="vertical-align: middle;margin-right: 4px;" /> Typescript
+  </li>
+  </li>
+    <li style="vertical-align: middle;">
+    <img src="https://go-skill-icons.vercel.app/api/icons?i=tailwind" alt="tailwind" width="20" style="vertical-align: middle;margin-right: 4px;" /> Tailwind
+  </li>
+    <li style="vertical-align: middle;">
+    <img src="https://go-skill-icons.vercel.app/api/icons?i=vite" alt="vite" width="24" style="vertical-align: middle;margin-right: 4px;" /> Vite
+  </li>
+  <li style="vertical-align: middle;">
+    <img src="https://go-skill-icons.vercel.app/api/icons?i=vitest" alt="vitest" width="24" style="vertical-align: middle;margin-right: 4px;" /> Vitest
+  </li>
+  <li style="vertical-align: middle;">
+    <img src="https://go-skill-icons.vercel.app/api/icons?i=supabase" alt="supabase" width="24" style="vertical-align: middle;margin-right: 4px;" /> Supabase
+  </li>
+  </li>
+</ul>
 
-There are several ways of editing your application.
+## ⚡ Features
 
-**Use Lovable**
+* **Panel de Control (Dashboard):** Una vista general del estado financiero del usuario, incluyendo saldos de cuentas, resúmenes de gastos y progreso hacia metas financieras.
+* **Seguimiento de Ingresos y Gastos:** Capacidad para registrar y categorizar transacciones financieras.
+* **Gestión de Presupuestos:** Herramientas para crear y monitorear presupuestos para diferentes categorías de gastos.
+* **Establecimiento de Metas Financieras:** Funcionalidad para definir y seguir el progreso de objetivos financieros (ej. ahorros para un viaje, pago de deudas).
+* **Informes y Análisis:** Generación de informes visuales (gráficos, tablas) para ayudar a los usuarios a entender sus patrones de gasto y tomar decisiones informadas.
+* **Gestión de Cuentas:** Posibilidad de agregar y gestionar múltiples cuentas financieras (bancarias, tarjetas de crédito, etc.). (Esto podría implicar la integración con instituciones financieras o la entrada manual de datos).
+* **Interfaz de Usuario Intuitiva:** Diseñada para ser fácil de usar y navegar, permitiendo a los usuarios acceder rápidamente a la información que necesitan.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/136338c2-91f0-484d-a14e-70bf94291658) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Credits
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/136338c2-91f0-484d-a14e-70bf94291658) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Template created with [lovable.dev] (https://lovable.dev). 
+Made with ❤️ by [samuelbonifacio015] (https://github.com/samuelbonifacio015). 

@@ -18,7 +18,7 @@ const DEMO_USERS: User[] = [
     id: '2',
     email: 'admin@ejemplo.com',
     name: 'Administrador',
-    role: 'user', // Changed from 'admin' to 'user'
+    role: 'user', 
     createdAt: new Date().toISOString(),
   },
 ];
@@ -42,7 +42,6 @@ export const login = (email: string, password: string): Promise<{ user: User; to
   return new Promise((resolve, reject) => {
     // Simulamos un delay de red
     setTimeout(() => {
-      // En una aplicación real, verificaríamos el email y la contraseña con el backend
       const user = DEMO_USERS.find((u) => u.email.toLowerCase() === email.toLowerCase());
       
       if (user) {
@@ -98,11 +97,9 @@ export const register = (email: string, name: string, password: string): Promise
 export const logout = (): void => {
   localStorage.removeItem(STORAGE_KEY);
   toast.info('Sesión cerrada');
-  // En una aplicación real, tal vez querramos redirigir al usuario aquí
   window.location.href = '/';
 };
 
-// Previously checking for 'admin' role, now removed since we only have 'user'
 export const isAdmin = (): boolean => {
-  return false; // Since we removed the admin role, always return false
+  return false; 
 };

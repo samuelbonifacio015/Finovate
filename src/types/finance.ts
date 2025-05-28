@@ -17,7 +17,7 @@ export interface Account {
   name: string;
   type: AccountType;
   balance: number;
-  currency: 'USD' | 'PEN'; // Limitado a USD y Sol Peruano
+  currency: 'USD' | 'PEN'; 
   createdAt: string;
   updatedAt: string;
 }
@@ -26,13 +26,13 @@ export type TransactionType = 'deposit' | 'withdrawal' | 'transfer';
 
 export interface Transaction {
   id: string;
-  customId: string; // ID personalizado para búsquedas
+  customId: string; 
   accountId: string;
   type: TransactionType;
   amount: number;
   description: string;
   date: string;
-  time: string; // Hora separada
+  time: string; 
   relatedAccountId?: string;
 }
 

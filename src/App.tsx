@@ -44,7 +44,6 @@ const App = () => (
               <Route path="/accounts/:id" element={<AccountDetails />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/goals" element={<Goals />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </React.Suspense>
