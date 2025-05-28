@@ -225,7 +225,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Gamificación del Ahorro */}
+        {/* MiniGame */}
         <div className="py-16 bg-gradient-to-br from-blue-50 to-purple-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
@@ -256,7 +256,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Educación Financiera Personalizada */}
+        {/* Financial Education */}
         <div className="py-16 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
@@ -424,7 +424,7 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* Asistente Virtual Financiero */}
+      {/* ChatBot */}
       <ChatButton />
     </div>
   );
