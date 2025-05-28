@@ -78,11 +78,8 @@ const Dashboard = () => {
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Mi Dashboard</h1>
-            <div className="mt-2">
-              <p className="text-3xl font-bold text-gray-900">$17,540.00</p>
-              <p className="text-gray-600">Saldo total en todas tus cuentas</p>
-            </div>
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard Financiero</h1>
+            <p className="text-gray-600 mt-2">Resumen completo de tu situación financiera</p>
           </div>
 
           {/* Estadísticas principales */}
