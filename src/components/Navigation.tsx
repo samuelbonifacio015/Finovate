@@ -130,11 +130,11 @@ const Navigation: React.FC = () => {
       <div className="container mx-auto py-4 px-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-6">
-            {/* Mobile Menu */}
+            {/* Mobile Menu - Mostrar siempre en móvil cuando estemos en dashboard */}
             {isMobile && isDashboard && (
               <Drawer>
                 <DrawerTrigger asChild>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="p-2">
                     <Menu className="h-5 w-5" />
                   </Button>
                 </DrawerTrigger>
@@ -153,14 +153,12 @@ const Navigation: React.FC = () => {
                         </div>
                       </DrawerClose>
                     </nav>
-                    {isDashboard && (
-                      <div className="mt-6 pt-6 border-t border-gray-200">
-                        <span className="inline-flex items-center gap-2 text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full mb-4">
-                          <div className="w-2 h-2 rounded-full bg-blue-600"></div>
-                          Demo: Usuario
-                        </span>
-                      </div>
-                    )}
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <span className="inline-flex items-center gap-2 text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full mb-4">
+                        <div className="w-2 h-2 rounded-full bg-blue-600"></div>
+                        Demo: Usuario
+                      </span>
+                    </div>
                   </div>
                   <DrawerFooter>
                     <DrawerClose asChild>
@@ -175,9 +173,11 @@ const Navigation: React.FC = () => {
 
             <Link to="/" className="flex items-center gap-2">
               <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg p-2 text-lg font-bold">F</div>
-              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500">
-                Finovate
-              </span>
+              {!isMobile && (
+                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500">
+                  Finovate
+                </span>
+              )}
             </Link>
             
             {/* Desktop Navigation */}

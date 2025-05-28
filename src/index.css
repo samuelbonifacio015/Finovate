@@ -138,6 +138,11 @@
     @apply bg-gradient-to-br from-blue-500 to-violet-600 text-white;
   }
 
+  /* Estilos para modales más pequeños */
+  .dialog-content-small {
+    @apply max-w-sm sm:max-w-md;
+  }
+
   /* Animación para el chat */
   @keyframes scale-in {
     0% {
@@ -152,5 +157,17 @@
 
   .animate-scale-in {
     animation: scale-in 0.2s ease-out;
+  }
+}
+
+/* Sobrescribir estilos de diálogo para modales más pequeños */
+[data-radix-dialog-content] {
+  max-width: 28rem !important;
+}
+
+@media (max-width: 640px) {
+  [data-radix-dialog-content] {
+    max-width: 20rem !important;
+    margin: 1rem;
   }
 }
