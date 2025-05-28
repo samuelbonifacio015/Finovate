@@ -176,7 +176,7 @@ const Navigation: React.FC = () => {
             <Link to="/" className="flex items-center gap-2">
               <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg p-2 text-lg font-bold">F</div>
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500">
-                FinanzApp
+                Finovate
               </span>
             </Link>
             

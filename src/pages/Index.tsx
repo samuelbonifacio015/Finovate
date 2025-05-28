@@ -417,8 +417,9 @@ const Index = () => {
       <footer className="bg-finance-primary text-white py-8">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <p className="font-medium mb-2">© 2023 FinanzApp</p>
-            <p className="text-sm text-gray-300">Una aplicación de gestión financiera personal</p>
+            <p className="font-medium mb-2">© 2025 Finovate</p>
+            <p className="text-sm text-gray-300 mb-1">Una aplicación de gestión financiera</p>
+            <p className="text-sm text-gray-300">desarrollada por Samuel Bonifacio</p>
           </div>
         </div>
       </footer>
