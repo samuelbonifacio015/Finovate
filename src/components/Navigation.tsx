@@ -55,13 +55,6 @@ const Navigation: React.FC = () => {
         className={`hover:text-primary transition-colors text-base ${location.pathname.includes('/accounts') ? 'text-primary font-medium' : 'text-gray-600'}`}
         onClick={onLinkClick}
       >
-        Cuenta Demo
-      </Link>
-      <Link 
-        to="/goals" 
-        className={`hover:text-primary transition-colors text-base ${location.pathname === '/goals' ? 'text-primary font-medium' : 'text-gray-600'}`}
-        onClick={onLinkClick}
-      >
         Metas
       </Link>
       <Link 
@@ -138,7 +131,7 @@ const Navigation: React.FC = () => {
       <div className="container mx-auto py-4 px-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-6">
-            {/* Mobile Menu - Now shows for all screen sizes up to lg */}
+            {/* Mobile Menu */}
             {(isMobile || window.innerWidth <= 768) && isDashboard && (
               <Drawer>
                 <DrawerTrigger asChild>
@@ -188,7 +181,7 @@ const Navigation: React.FC = () => {
               </span>
             </Link>
             
-            {/* Desktop Navigation - Hidden on mobile and tablet */}
+            {/* Desktop Navigation */}
             {!isMobile && window.innerWidth > 768 && isDashboard && (
               <nav className="hidden lg:flex space-x-5">
                 <NavigationLinks />
@@ -196,7 +189,7 @@ const Navigation: React.FC = () => {
             )}
           </div>
           
-          {/* Desktop Auth Buttons - Hidden on mobile */}
+          {/* Desktop Auth Buttons */}
           {!isMobile && window.innerWidth > 768 && (
             <div className="hidden lg:flex items-center space-x-4">
               <AuthButtons />

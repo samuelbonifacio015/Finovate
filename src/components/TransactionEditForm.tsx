@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -16,6 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 
 interface TransactionEditFormProps {
   transaction: Transaction;
@@ -65,6 +65,29 @@ const TransactionEditForm: React.FC<TransactionEditFormProps> = ({
       toast.error("No se pudo actualizar la transacción");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleExportTransaction = () => {
+    try {
+      // Create a JSON blob with the transaction data and download it
+      const dataStr = JSON.stringify(transaction, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      
+      // Create temporary link element to trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `transaccion-${transaction.customId || transaction.id}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Transacción exportada exitosamente');
+    } catch (error) {
+      console.error('Error al exportar transacción:', error);
+      toast.error('No se pudo exportar la transacción');
     }
   };
 
@@ -167,6 +190,15 @@ const TransactionEditForm: React.FC<TransactionEditFormProps> = ({
         </div>
 
         <div className="flex gap-2 justify-end pt-4">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={handleExportTransaction}
+            className="mr-auto flex items-center gap-1"
+          >
+            <Download size={16} />
+            Exportar JSON
+          </Button>
           <Button 
             type="button" 
             variant="outline" 

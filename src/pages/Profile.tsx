@@ -281,9 +281,8 @@ const Profile: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 text-xs sm:text-sm">
-                  <p><span className="font-medium">Versión:</span> 1.0.0</p>
-                  <p><span className="font-medium">Última actualización:</span> 15 de Enero, 2024</p>
-                  <p><span className="font-medium">Estado:</span> <Badge variant="secondary" className="text-xs">Activo</Badge></p>
+                  <p><span className="font-medium">Versión:</span> 1.1.0</p>
+                  <p><span className="font-medium">Última actualización:</span> 29 de Enero, 2025</p>
                 </div>
               </CardContent>
             </Card>

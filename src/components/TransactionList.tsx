@@ -4,7 +4,7 @@ import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { TrashIcon, Search, PencilIcon } from 'lucide-react';
+import { TrashIcon, Search, PencilIcon, Download } from 'lucide-react';
 import { deleteTransaction } from '@/services/financeService';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import TransactionEditForm from '@/components/TransactionEditForm';
@@ -156,6 +156,52 @@ const TransactionList: React.FC<TransactionListProps> = ({
     toast.success("Transacción actualizada exitosamente");
   };
 
+  const handleExportAllTransactions = () => {
+    try {
+      // Create a JSON blob and download it
+      const dataStr = JSON.stringify(sortedTransactions, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      
+      // Create temporary link element to trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'transacciones.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Transacciones exportadas exitosamente');
+    } catch (error) {
+      console.error('Error al exportar transacciones:', error);
+      toast.error('No se pudieron exportar las transacciones');
+    }
+  };
+
+  const handleExportTransaction = (transaction: Transaction) => {
+    try {
+      // Create a JSON blob with the single transaction and download it
+      const dataStr = JSON.stringify(transaction, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      
+      // Create temporary link element to trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `transaccion-${transaction.customId || transaction.id}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Transacción exportada exitosamente');
+    } catch (error) {
+      console.error('Error al exportar transacción:', error);
+      toast.error('No se pudo exportar la transacción');
+    }
+  };
+
   return (
     <>
       <div className="bg-white rounded-lg shadow-sm border border-border">
@@ -163,14 +209,24 @@ const TransactionList: React.FC<TransactionListProps> = ({
           <h3 className="font-semibold text-lg mb-3">
             Historial de Transacciones
           </h3>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Buscar por ID o descripción..."
-              className="pl-9"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="relative flex items-center gap-2">
+            <div className="relative flex-grow">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Buscar por ID o descripción..."
+                className="pl-9"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <Button
+              variant="outline"
+              className="flex items-center gap-1"
+              onClick={handleExportAllTransactions}
+            >
+              <Download size={16} />
+              Exportar JSON
+            </Button>
           </div>
         </div>
         
@@ -223,6 +279,14 @@ const TransactionList: React.FC<TransactionListProps> = ({
                       onClick={() => handleEditTransaction(transaction)}
                     >
                       <PencilIcon size={16} />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-green-500 hover:text-green-700 hover:bg-green-50"
+                      onClick={() => handleExportTransaction(transaction)}
+                    >
+                      <Download size={16} />
                     </Button>
                     <Button 
                       variant="ghost" 

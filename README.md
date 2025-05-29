@@ -38,6 +38,10 @@ El propósito principal de la aplicación es ofrecer a los usuarios un panel de 
 * **Gestión de Cuentas:** Posibilidad de agregar y gestionar múltiples cuentas financieras (bancarias, tarjetas de crédito, etc.). (Esto podría implicar la integración con instituciones financieras o la entrada manual de datos).
 * **Interfaz de Usuario Intuitiva:** Diseñada para ser fácil de usar y navegar, permitiendo a los usuarios acceder rápidamente a la información que necesitan.
 
+## ⚠️ Pending Features
+
+* **Gamificación del ahorro:** Implementar desafíos interactivos para fomentar el ahorro y progreso de mejora financiero.
+* **Educación Financiera:** Implementar Artículos, Videos y Consejos Personalizados que se actualizarán diariamente para mejorar la experiencia de usuario, y ayudar a un usuario nuevo a guiarlo por un buen camino.
 
 ## Credits
 
