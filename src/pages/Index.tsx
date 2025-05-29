@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Navigation from '@/components/Navigation';
 import SavingsGamification from '@/components/SavingsGamification';
 import ChatButton from '@/components/ChatButton';
-import { ArrowRight, CreditCard, BarChart, Wallet, BookOpen, PiggyBank, Coins, Calculator, Trophy, Target, Gamepad2 } from 'lucide-react';
+import { ArrowRight, CreditCard, BarChart, Wallet, BookOpen, PiggyBank, Coins, Calculator, Trophy, Target, Gamepad2, Github } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -416,10 +415,23 @@ const Index = () => {
       
       <footer className="bg-finance-primary text-white py-8">
         <div className="container mx-auto px-4">
-          <div className="text-center">
-            <p className="font-medium mb-2">© 2025 Finovate</p>
-            <p className="text-sm text-gray-300 mb-1">Una aplicación de gestión financiera</p>
-            <p className="text-sm text-gray-300">desarrollada por Samuel Bonifacio</p>
+          <div className="flex items-center justify-between">
+            <a 
+              href="https://github.com/samuelbonifacio015/Finovate" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center hover:text-blue-300 transition-colors"
+            >
+              <Github className="h-6 w-6 mr-2" />
+              <span className="text-sm">Ver en GitHub</span>
+            </a>
+            <div className="text-center">
+              <p className="font-medium mb-2">© 2025 Finovate</p>
+              <p className="text-sm text-gray-300 mb-1">Una aplicación de gestión financiera</p>
+              <p className="text-sm text-gray-300">desarrollada por Samuel Bonifacio</p>
+            </div>
+            <div className="w-[120px]"> {/* Empty div to balance the layout */}
+            </div>
           </div>
         </div>
       </footer>
