@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -60,6 +59,16 @@ const FinancialAssistant: React.FC<FinancialAssistantProps> = ({ isOpen, onClose
     if (message.includes('usar') && (message.includes('aplicacion') || message.includes('aplicación') || message.includes('app'))) {
       return 'Te explico cómo usar esta aplicación: 1) Ve al Dashboard para ver tu resumen financiero, 2) Usa "Cuentas" para gestionar tus diferentes cuentas bancarias, 3) Registra transacciones en tiempo real, 4) Revisa los gráficos y estadísticas para entender tus patrones, 5) Establece presupuestos y metas de ahorro. ¡Todo está diseñado para simplificar tu vida financiera!';
     }
+
+    // Respuesta sobre inversiones
+    if (message.includes('invertir') || message.includes('inversión') || message.includes('inversiones')) {
+      return 'Invertir es una excelente forma de hacer crecer tu dinero a largo plazo. Te recomiendo diversificar tus inversiones, informarte sobre los diferentes instrumentos financieros y nunca invertir dinero que puedas necesitar a corto plazo. ¿Te gustaría saber más sobre fondos, acciones o inversiones seguras?';
+    }
+
+    //  Respuesta sobre deudas
+    if (message.includes('deuda') || message.includes('deudas') || message.includes('pagar deuda')) {
+      return 'Para gestionar tus deudas: 1) Prioriza pagar las deudas con mayor interés, 2) Intenta no adquirir nuevas deudas innecesarias, 3) Usa la app para registrar tus pagos y ver tu progreso, 4) Si es posible, consolida tus deudas para reducir intereses. ¿Quieres un plan personalizado para salir de deudas?';
+    }
     
     // Respuesta general
     return 'Entiendo tu consulta. Como tu asistente financiero, te recomiendo: 1) Usar esta aplicación diariamente para registrar movimientos, 2) Revisar tus estadísticas semanalmente, 3) Establecer metas financieras claras. ¿Te gustaría que profundice en algún tema específico como ahorro, inversiones o el uso de la aplicación?';
@@ -71,6 +80,12 @@ const FinancialAssistant: React.FC<FinancialAssistantProps> = ({ isOpen, onClose
     // Verificar límite de mensajes (máximo 4 mensajes del usuario)
     const userMessages = messages.filter(msg => msg.sender === 'user');
     if (userMessages.length >= 4) {
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 2).toString(),
+        content: 'Has excedido el límite de 4 mensajes. Si necesitas más ayuda, por favor recarga la página o vuelve a abrir el asistente.',
+        sender: 'assistant',
+        timestamp: new Date()
+      }]);
       return;
     }
 
@@ -85,7 +100,7 @@ const FinancialAssistant: React.FC<FinancialAssistantProps> = ({ isOpen, onClose
     setInputMessage('');
     setIsTyping(true);
 
-    // Simular tiempo de respuesta del asistente
+    // Simulación de tiempo de respuesta del asistente
     setTimeout(() => {
       const assistantResponse: Message = {
         id: (Date.now() + 1).toString(),

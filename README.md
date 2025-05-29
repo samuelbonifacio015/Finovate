@@ -63,9 +63,10 @@ npm install
 
 # Iniciar el servidor de desarrollo
 npm run dev
-```
 
-La aplicación estará disponible en `http://localhost:5173`.
+# Se mostrará un mensaje similar a este: 
+-> Local: http://localhost:<direccion>/
+```
 
 ## ⚡ Características
 
