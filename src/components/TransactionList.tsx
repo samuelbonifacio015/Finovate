@@ -158,12 +158,11 @@ const TransactionList: React.FC<TransactionListProps> = ({
 
   const handleExportAllTransactions = () => {
     try {
-      // Create a JSON blob and download it
+      // Crea un archivo JSON con todas las transacciones y lo descarga
       const dataStr = JSON.stringify(sortedTransactions, null, 2);
       const dataBlob = new Blob([dataStr], { type: 'application/json' });
       const url = URL.createObjectURL(dataBlob);
       
-      // Create temporary link element to trigger download
       const link = document.createElement('a');
       link.href = url;
       link.download = 'transacciones.json';
@@ -181,12 +180,11 @@ const TransactionList: React.FC<TransactionListProps> = ({
 
   const handleExportTransaction = (transaction: Transaction) => {
     try {
-      // Create a JSON blob with the single transaction and download it
+      // Crea un archivo JSON para la transacción seleccionada y lo descarga
       const dataStr = JSON.stringify(transaction, null, 2);
       const dataBlob = new Blob([dataStr], { type: 'application/json' });
       const url = URL.createObjectURL(dataBlob);
       
-      // Create temporary link element to trigger download
       const link = document.createElement('a');
       link.href = url;
       link.download = `transaccion-${transaction.customId || transaction.id}.json`;
@@ -304,7 +302,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
         )}
       </div>
 
-      {/* Dialog for editing transaction */}
+      {/* Cuadro de edición de transacción */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>

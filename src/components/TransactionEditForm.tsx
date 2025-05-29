@@ -70,12 +70,10 @@ const TransactionEditForm: React.FC<TransactionEditFormProps> = ({
 
   const handleExportTransaction = () => {
     try {
-      // Create a JSON blob with the transaction data and download it
       const dataStr = JSON.stringify(transaction, null, 2);
       const dataBlob = new Blob([dataStr], { type: 'application/json' });
       const url = URL.createObjectURL(dataBlob);
       
-      // Create temporary link element to trigger download
       const link = document.createElement('a');
       link.href = url;
       link.download = `transaccion-${transaction.customId || transaction.id}.json`;

@@ -11,6 +11,20 @@ El propósito principal de la aplicación es ofrecer a los usuarios un panel de 
   <a href="#tecnologías">Tecnologías</a>
 </p>
 
+## 📸 Screenshots
+
+### Página de inicio y características principales
+![Página de inicio de Finovate](./screenshots/finovate-1.PNG)
+*La página de inicio de Finovate muestra una interfaz moderna y limpia con un panel de navegación en la parte superior, un hero section que destaca las principales funcionalidades de la aplicación, y un dashboard de ejemplo que muestra cómo se visualizan las cuentas y balances del usuario. La interfaz utiliza una paleta de colores profesional en tonos azules y púrpuras, con una distribución espaciada que facilita la lectura y navegación.*
+
+### Dashboard financiero detallado
+![Dashboard financiero](./screenshots/finovate-2.PNG)
+*El dashboard financiero proporciona una visión completa de la situación económica del usuario. Incluye tarjetas informativas que muestran los ingresos totales (3700 USD), gastos (3000 USD), ahorros (700 USD), y progreso en metas financieras (68%). También presenta gráficos visuales de evolución mensual de ingresos y gastos, así como un desglose de gastos por categoría representado en un gráfico circular. La interfaz está diseñada para permitir al usuario identificar rápidamente su situación financiera con un solo vistazo.*
+
+### Gestión de transacciones y exportación
+![Gestión de transacciones](./screenshots/finovate-3.PNG)
+*La sección de gestión de transacciones muestra un historial detallado de movimientos financieros. Cada transacción incluye información como descripción, tipo (depósito, retiro, transferencia), fecha y monto. La interfaz permite filtrar transacciones, editarlas mediante el botón de lápiz, y ahora incluye una nueva f++uncionalidad para exportar las transacciones en formato JSON, tanto individualmente como en conjunto. Los usuarios pueden realizar estas acciones fácilmente a través de los botones intuitivos situados junto a cada transacción.*
+
 ## 💻 Tech Stack
 
 <ul style="display: flex; flex-direction: column; gap:10px;">
@@ -94,20 +108,6 @@ Puedes acceder a la versión de demostración de Finovate sin necesidad de regis
 3. **Metas:** Establece objetivos financieros y haz seguimiento de tu progreso.
 4. **Cuenta Demo:** Explora las funcionalidades de una cuenta bancaria de ejemplo.
 5. **Perfil:** Configura tus preferencias y gestiona tu información personal.
-
-## 📸 Screenshots
-
-### Página de inicio y características principales
-![Página de inicio de Finovate](./screenshots/finovate-1.PNG)
-*La página de inicio de Finovate muestra una interfaz moderna y limpia con un panel de navegación en la parte superior, un hero section que destaca las principales funcionalidades de la aplicación, y un dashboard de ejemplo que muestra cómo se visualizan las cuentas y balances del usuario. La interfaz utiliza una paleta de colores profesional en tonos azules y púrpuras, con una distribución espaciada que facilita la lectura y navegación.*
-
-### Dashboard financiero detallado
-![Dashboard financiero](./screenshots/finovate-2.PNG)
-*El dashboard financiero proporciona una visión completa de la situación económica del usuario. Incluye tarjetas informativas que muestran los ingresos totales (3700 USD), gastos (3000 USD), ahorros (700 USD), y progreso en metas financieras (68%). También presenta gráficos visuales de evolución mensual de ingresos y gastos, así como un desglose de gastos por categoría representado en un gráfico circular. La interfaz está diseñada para permitir al usuario identificar rápidamente su situación financiera con un solo vistazo.*
-
-### Gestión de transacciones y exportación
-![Gestión de transacciones](./screenshots/finovate-3.PNG)
-*La sección de gestión de transacciones muestra un historial detallado de movimientos financieros. Cada transacción incluye información como descripción, tipo (depósito, retiro, transferencia), fecha y monto. La interfaz permite filtrar transacciones, editarlas mediante el botón de lápiz, y ahora incluye una nueva funcionalidad para exportar las transacciones en formato JSON, tanto individualmente como en conjunto. Los usuarios pueden realizar estas acciones fácilmente a través de los botones intuitivos situados junto a cada transacción.*
 
 ## ⚠️ Próximas funcionalidades
 
