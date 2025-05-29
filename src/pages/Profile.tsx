@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,15 +32,16 @@ const Profile: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [language, setLanguage] = useState('es');
+  const [currency, setCurrency] = useState(() => localStorage.getItem('finovate_currency') || 'EUR');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Datos simulados del usuario
   const userData = {
     name: 'Usuario Demo',
     email: 'usuario@ejemplo.com',
-    phone: '+34 600 123 456',
-    address: 'Calle Ejemplo 123, Madrid, España',
-    joinDate: '15 de Enero, 2024'
+    phone: 'Nada que mostrar por ahora...',
+    address: 'Nada que mostrar por ahora...',
+    joinDate: '¡Gracias por usar Finovate!'
   };
 
   const handleSave = () => {
@@ -78,7 +78,7 @@ const Profile: React.FC = () => {
               </div>
               <div className="text-center sm:text-left">
                 <h3 className="text-lg sm:text-xl font-semibold">{userData.name}</h3>
-                <p className="text-sm sm:text-base text-muted-foreground">Miembro desde {userData.joinDate}</p>
+                <p className="text-sm sm:text-base text-muted-foreground"> {userData.joinDate}</p>
               </div>
             </div>
 
@@ -234,17 +234,18 @@ const Profile: React.FC = () => {
               <CardContent className="space-y-3 sm:space-y-4">
                 <div className="space-y-2">
                   <Label className="text-sm">Formato de moneda</Label>
-                  <Select defaultValue="eur">
+                  <Select value={currency} onValueChange={setCurrency}>
                     <SelectTrigger className="text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="eur">Euro (€)</SelectItem>
-                      <SelectItem value="usd">US Dollar ($)</SelectItem>
-                      <SelectItem value="gbp">British Pound (£)</SelectItem>
+                      <SelectItem value="EUR">Euro (€)</SelectItem>
+                      <SelectItem value="USD">US Dollar ($)</SelectItem>
+                      <SelectItem value="PEN">Soles (S/)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+                <Button onClick={() => { localStorage.setItem('finovate_currency', currency); handleSave(); }} className="w-full sm:w-auto text-sm">Aplicar cambios</Button>
               </CardContent>
             </Card>
           </div>

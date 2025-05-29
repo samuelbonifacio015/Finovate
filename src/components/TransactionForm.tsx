@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -29,6 +28,12 @@ interface TransactionFormProps {
   initialType?: 'deposit' | 'withdrawal';
 }
 
+const CURRENCY_OPTIONS = [
+  { value: 'EUR', label: 'Euros (€)' },
+  { value: 'USD', label: 'Dólares ($)' },
+  { value: 'PEN', label: 'Soles (S/)' },
+];
+
 const TransactionForm: React.FC<TransactionFormProps> = ({
   onSubmit,
   isLoading = false,
@@ -36,6 +41,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 }) => {
   const today = new Date().toISOString().split('T')[0];
   const now = new Date().toTimeString().slice(0, 5);
+  const defaultCurrency = localStorage.getItem('finovate_currency') || 'EUR';
   
   const formSchema = z.object({
     customId: z.string().min(1, 'El ID es requerido'),
@@ -44,6 +50,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     description: z.string().min(3, 'La descripción debe tener al menos 3 caracteres'),
     date: z.string().min(1, 'La fecha es requerida'),
     time: z.string().min(1, 'La hora es requerida'),
+    currency: z.string().min(1, 'La divisa es requerida'),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,6 +62,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       description: '',
       date: today,
       time: now,
+      currency: defaultCurrency,
     },
   });
 
@@ -106,6 +114,34 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="currency"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Divisa</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}
+                defaultValue={defaultCurrency}
+                disabled={isLoading}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona la divisa" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {CURRENCY_OPTIONS.map(opt => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

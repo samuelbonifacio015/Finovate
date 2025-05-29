@@ -20,6 +20,12 @@ import { formatCurrency } from '@/utils/formatters';
 import { toast } from 'sonner';
 import { Plus, CreditCard, PiggyBank, TrendingUp, ArrowLeftRight } from 'lucide-react';
 
+const CURRENCY_OPTIONS = [
+  { value: 'EUR', label: 'Euros (€)' },
+  { value: 'USD', label: 'Dólares ($)' },
+  { value: 'PEN', label: 'Soles (S/)' },
+];
+
 const Transactions = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -28,6 +34,7 @@ const Transactions = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
   const [isTransferDialogOpen, setIsTransferDialogOpen] = useState(false);
+  const [currency, setCurrency] = useState(() => localStorage.getItem('finovate_currency') || 'EUR');
 
   useEffect(() => {
     if (!user) {
@@ -37,6 +44,10 @@ const Transactions = () => {
     
     loadData();
   }, [user, navigate]);
+
+  useEffect(() => {
+    localStorage.setItem('finovate_currency', currency);
+  }, [currency]);
 
   const loadData = () => {
     const accountsData = getAccounts();
@@ -130,6 +141,21 @@ const Transactions = () => {
             <p className="text-gray-600 mt-2">Administra tus transacciones y transferencias</p>
           </div>
 
+          {/* Selector de divisa */}
+          <div className="mb-6 flex items-center gap-3">
+            <label htmlFor="currency-select" className="font-medium text-sm">Divisa:</label>
+            <select
+              id="currency-select"
+              value={currency}
+              onChange={e => setCurrency(e.target.value)}
+              className="border rounded px-2 py-1 text-sm"
+            >
+              {CURRENCY_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Resumen de Cuentas */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {accounts.map((account) => (
@@ -142,7 +168,7 @@ const Transactions = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-gray-900">
-                    {formatCurrency(account.balance, account.currency)}
+                    {formatCurrency(account.balance, currency)}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
                     {account.name}
@@ -198,6 +224,7 @@ const Transactions = () => {
             accounts={accounts}
             onTransactionDeleted={loadData}
             onTransactionUpdated={loadData}
+            currency={currency}
           />
         </div>
       </main>

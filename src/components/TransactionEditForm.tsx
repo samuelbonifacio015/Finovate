@@ -23,6 +23,12 @@ interface TransactionEditFormProps {
   onCancel: () => void;
 }
 
+const CURRENCY_OPTIONS = [
+  { value: 'EUR', label: 'Euros (€)' },
+  { value: 'USD', label: 'Dólares ($)' },
+  { value: 'PEN', label: 'Soles (S/)' },
+];
+
 const TransactionEditForm: React.FC<TransactionEditFormProps> = ({
   transaction,
   onSuccess,
@@ -36,6 +42,7 @@ const TransactionEditForm: React.FC<TransactionEditFormProps> = ({
     amount: z.coerce.number().positive('El monto debe ser mayor a 0'),
     date: z.string().min(1, 'La fecha es requerida'),
     time: z.string().min(1, 'La hora es requerida'),
+    currency: z.string().min(1, 'La divisa es requerida'),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -46,6 +53,7 @@ const TransactionEditForm: React.FC<TransactionEditFormProps> = ({
       amount: transaction.amount,
       date: transaction.date,
       time: transaction.time,
+      currency: transaction.currency || (localStorage.getItem('finovate_currency') || 'EUR'),
     },
   });
 
@@ -58,6 +66,7 @@ const TransactionEditForm: React.FC<TransactionEditFormProps> = ({
         amount: data.amount,
         date: data.date,
         time: data.time,
+        currency: data.currency,
       });
       onSuccess();
     } catch (error) {
@@ -144,6 +153,26 @@ const TransactionEditForm: React.FC<TransactionEditFormProps> = ({
                   El monto no se puede editar en transferencias.
                 </p>
               )}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="currency"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Divisa</FormLabel>
+              <select
+                {...field}
+                className="border rounded px-2 py-1 text-sm"
+                disabled={isLoading}
+              >
+                {CURRENCY_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
               <FormMessage />
             </FormItem>
           )}

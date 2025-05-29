@@ -1,4 +1,3 @@
-
 export type UserRole = 'user';
 
 export interface User {
@@ -34,6 +33,7 @@ export interface Transaction {
   date: string;
   time: string; 
   relatedAccountId?: string;
+  currency: string;
 }
 
 export interface TransferData {
@@ -50,6 +50,7 @@ export interface TransactionFormData {
   description: string;
   date: string;
   time: string;
+  currency: string;
 }
 
 export interface TransactionUpdate {
