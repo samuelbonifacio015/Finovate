@@ -1,17 +1,38 @@
 <script setup>
 
+import {ref} from "vue";
+
 const topbarImage = () => {
   return 'public/finovate.png'
 }
 
-const emit = defineEmits(['menu-toggle'])
+const emit = defineEmits(['menu-toggle', 'open-auth'])
 
-const onMenuToggle = () => {
-  emit('menu-toggle')
-}
+const onMenuToggle = () => { emit('menu-toggle')}
+
+const user = ref(null)
+
+const showProfileMenu = ref(false)
+const showAuthMenu = ref(false)
 
 const onProfileMenuToggle = () => {
-  // Placeholder for profile menu toggle logic
+  if (user.value){
+    showProfileMenu.value = !showProfileMenu.value
+    showAuthMenu.value = false
+  } else {
+    showAuthMenu.value = !showAuthMenu.value
+    showProfileMenu.value = false
+  }
+}
+
+const openAuth = (mode) => {
+  emit('open-auth', mode)
+  showAuthMenu.value = false
+}
+
+const logout = () => {
+  user.value = null
+  showProfileMenu.value = false
 }
 
 </script>
@@ -38,7 +59,8 @@ const onProfileMenuToggle = () => {
         </button>
       </li>
       <li>
-        <button class="p-link layout-topbar-button">
+        <button class="p-link layout-topbar-button"
+          @click="onProfileMenuToggle">
           <i class="pi pi-user"></i>
         </button>
       </li>
