@@ -1,0 +1,112 @@
+@import "../variables";
+
+.layout-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5rem;
+  z-index: 997;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  background-color: var(--surface-card);
+  border-bottom: 1px solid var(--surface-border);
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08);
+  transition: all $transitionDuration;
+
+  .layout-topbar-logo {
+    display: flex;
+    align-items: center;
+    color: var(--surface-900);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color $transitionDuration;
+
+    img {
+      height: 2.5rem;
+      margin-right: 0.5rem;
+    }
+
+    &:hover {
+      color: var(--primary-color);
+    }
+
+    &:focus {
+      outline: 0 none;
+      box-shadow: var(--focus-ring);
+    }
+  }
+
+  .layout-menu-button {
+    display: none;
+    margin-left: auto;
+  }
+
+  .layout-topbar-menu-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    transition: background-color $transitionDuration;
+
+    &:hover {
+      background-color: var(--surface-hover);
+    }
+
+    &:focus {
+      outline: 0 none;
+      box-shadow: var(--focus-ring);
+    }
+
+    i {
+      font-size: 1.5rem;
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .layout-topbar-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 0.5rem;
+    color: var(--text-color-secondary);
+    transition: color $transitionDuration;
+
+    &:hover {
+      color: var(--text-color);
+    }
+
+    &:focus {
+      outline: 0 none;
+      box-shadow: var(--focus-ring);
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .layout-topbar {
+    .layout-menu-button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      transition: background-color $transitionDuration;
+
+      &:hover {
+        background-color: var(--surface-hover);
+      }
+
+      i {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
