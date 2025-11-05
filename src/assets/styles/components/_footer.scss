@@ -1,0 +1,42 @@
+@import "../variables";
+
+.layout-footer {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  background-color: #0F172A;
+  text-align: center;
+  padding: 1rem 0;
+
+  .footer-container {
+    color: #FFFFFF;
+    font-size: 0.875rem;
+  }
+  .footer-content {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+
+    li {
+      display: inline;
+    }
+
+    a {
+      color: #FFFFFF;
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #3B82F6;
+      }
+    }
+  }
+  .footer-text {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #9CA3AF;
+  }
+}
