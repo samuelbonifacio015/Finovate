@@ -1,22 +1,29 @@
 <script setup>
 
-import {ref} from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 
 const topbarImage = () => {
   return 'public/finovate.png'
 }
 
 const emit = defineEmits(['menu-toggle', 'open-auth'])
-
 const onMenuToggle = () => { emit('menu-toggle')}
 
 const user = ref(null)
-
 const showProfileMenu = ref(false)
 const showAuthMenu = ref(false)
 
-const onProfileMenuToggle = () => {
-  if (user.value){
+const onDocumentClick = () => {
+  showProfileMenu.value = false
+  showAuthMenu.value = false
+}
+
+onMounted(() => document.addEventListener('click', onDocumentClick))
+onBeforeUnmount(() => document.removeEventListener('click', onDocumentClick))
+
+const onUserClick = (e) => {
+  e.stopPropagation()
+  if (user.value) {
     showProfileMenu.value = !showProfileMenu.value
     showAuthMenu.value = false
   } else {
@@ -58,11 +65,29 @@ const logout = () => {
           <i class="pi pi-inbox"></i>
         </button>
       </li>
-      <li>
-        <button class="p-link layout-topbar-button"
-          @click="onProfileMenuToggle">
+
+      <li class="relative">
+        <button class="p-link layout-topbar-button" @click.stop="onUserClick">
           <i class="pi pi-user"></i>
         </button>
+
+        <ul
+            class="auth-dropdown"
+            v-if="user ? showProfileMenu : showAuthMenu"
+            @click.stop
+        >
+          <li v-if="user">
+            <button class="p-link" @click="logout">Cerrar sesión</button>
+          </li>
+          <template v-else>
+            <li>
+              <button class="p-link" @click="openAuth('login')">Iniciar sesión</button>
+            </li>
+            <li>
+              <button class="p-link" @click="openAuth('register')">Registrarse</button>
+            </li>
+          </template>
+        </ul>
       </li>
     </ul>
   </div>
