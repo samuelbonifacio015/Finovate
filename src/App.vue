@@ -11,14 +11,14 @@ const handleMenuToggle = () => {
 <template>
   <div>
     <app-navbar @menu-toggle="handleMenuToggle"></app-navbar>
-    <app-footer @menu-toggle="handleMenuToggle"></app-footer>
     <home></home>
+    <app-footer @menu-toggle="handleMenuToggle"></app-footer>
     <router-view></router-view>
   </div>
 </template>
 
 <style lang="scss">
-@import "@/assets/styles/variables";
+@import "@/assets/styles/_variables.scss";
 
 * {
   margin: 0;
@@ -39,11 +39,18 @@ body {
   min-height: 100vh;
 }
 
+#app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1 0 auto;
+}
+
 button, input, select, textarea {
   font-family: $font-family-sans;
 }
 </style>
 
-<style scoped>
-
-</style>

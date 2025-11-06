@@ -10,19 +10,19 @@ const navigateTo = (path) => {
 </script>
 
 <template>
-  <main class="flex-grow-1 mx-6">
+  <main class="flex-grow-1 mx-5">
     <div class="surface-ground py-6 md:py-8">
       <div class="container mx-auto px-4">
         <div class="grid align-items-center">
           <div class="col-12 lg:col-6 pr-0 lg:pr-6">
-            <h1 class="text-5xl lg:text-6xl font-bold text-900 mb-4 line-height-3">
-              <span class="text-primary">Finanzas simples</span> para tu día a día
+            <h1 class="text-7xl lg:text-6xl font-bold text-900 text-blue-500 mb-4 line-height-3">
+              <span class="text-7xl">Finanzas simples</span> para tu día a día
             </h1>
             <p class="text-xl text-600 mb-5 line-height-3">
               Administra tus cuentas, realiza transferencias y mantén el control de tus finanzas en un solo lugar.
             </p>
             <button
-                class="p-button p-button-lg p-button-rounded gap-2 shadow-2"
+                class="text-600 p-3 border-round-lg w-4 bg-white border-gray-500 border-1"
                 @click="navigateTo('/dashboard')"
             >
               Ver Demostración
@@ -80,7 +80,7 @@ const navigateTo = (path) => {
                 </div>
 
                 <button
-                    class="p-button p-button-outlined w-full"
+                    class="text-600 p-3 border-round-lg w-full bg-white border-gray-500 border-1"
                     @click="navigateTo('/dashboard')"
                 >
                   Ver Todas las Cuentas
@@ -149,3 +149,4 @@ const navigateTo = (path) => {
     </div>
   </main>
 </template>
+
