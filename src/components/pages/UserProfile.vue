@@ -285,8 +285,8 @@ const handleSave = () => {
               <div class="surface-card border-1 border-gray-200 border-round p-4">
                 <h4 class="text-lg font-semibold mt-0">Información de la aplicación</h4>
                 <div class="text-sm">
-                  <p><span class="font-medium">Versión:</span> 1.1.0</p>
-                  <p><span class="font-medium">Última actualización:</span> 29 de Enero, 2025</p>
+                  <p><span class="font-medium">Versión:</span> 1.0.0</p>
+                  <p><span class="font-medium">Última actualización:</span> 6 de Noviembre, 2025</p>
                 </div>
               </div>
             </div>
