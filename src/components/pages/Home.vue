@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { CreditCard, Wallet, ArrowRight, BarChart3, Trophy } from 'lucide-vue-next';
+import {Button} from "primevue";
 
 const router = useRouter();
 
@@ -21,13 +22,15 @@ const navigateTo = (path) => {
             <p class="text-xl text-600 mb-5 line-height-3">
               Administra tus cuentas, realiza transferencias y mantén el control de tus finanzas en un solo lugar.
             </p>
-            <button
-                class="text-600 p-3 border-round-lg w-4 bg-white border-gray-500 border-1"
+            <Button
+                label="Ver Demostración"
+                class="text-600 p-3 border-round-lg w-4 bg-white border-gray-500 border-1 mr-2 mb-2"
                 @click="navigateTo('/dashboard')"
             >
-              Ver Demostración
-              <ArrowRight class="w-1rem h-1rem" />
-            </button>
+              <template #icon>
+                <ArrowRight class="w-1rem h-1rem" />
+              </template>
+            </Button>
           </div>
 
           <div class="col-12 lg:col-6 pl-0 lg:pl-6 mt-5 lg:mt-0">
@@ -79,12 +82,11 @@ const navigateTo = (path) => {
                   </div>
                 </div>
 
-                <button
-                    class="text-600 p-3 border-round-lg w-full bg-white border-gray-500 border-1"
+                <Button
+                    label="Ver Todas las Cuentas"
+                    class="text-600 p-3 border-round-lg w-full bg-white border-gray-500 border-1 mr-2 mb-2"
                     @click="navigateTo('/dashboard')"
-                >
-                  Ver Todas las Cuentas
-                </button>
+                />
               </div>
             </div>
           </div>
