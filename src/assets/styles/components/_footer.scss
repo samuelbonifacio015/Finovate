@@ -38,4 +38,11 @@
     font-size: 0.75rem;
     color: #9CA3AF;
   }
+
+  @media (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
 }

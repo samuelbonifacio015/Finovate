@@ -27,6 +27,8 @@ html, body, #app {
   -moz-osx-font-smoothing: grayscale;
   font-size: $fontSize;
   color: #212529;
+  height: 100%;
+  min-height: 100vh;
 }
 
 body {

@@ -16,6 +16,17 @@ const navigateTo = (path) => {
       <div class="container mx-auto px-4">
         <div class="grid align-items-center">
           <div class="col-12 lg:col-6 pr-0 lg:pr-6">
+            <!--TEMP--->
+            <Button
+                label="Ir a Mi Perfil"
+                class="text-600 p-3 border-round-lg w-4 bg-white border-gray-500 border-1 mr-2 mb-2"
+                @click="navigateTo('/user-profile')"
+            >
+              <template #icon>
+                <i class="pi pi-user"></i>
+              </template>
+            </Button>
+            <!--TEMP--->
             <h1 class="text-7xl lg:text-6xl font-bold text-900 text-blue-500 mb-4 line-height-3">
               <span class="text-7xl">Finanzas simples</span> para tu día a día
             </h1>
