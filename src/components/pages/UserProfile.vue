@@ -1,7 +1,6 @@
 <script setup>
 
 import { ref } from 'vue';
-import { User, ShieldLock, Palette, Globe, HelpCircle, LogOut, Settings } from 'lucide-vue-next';
 
 const activeSection = ref('datos-personales');
 const isMobileMenuOpen = ref(false);
@@ -13,12 +12,12 @@ const userData = {
 };
 
 const menuItems = [
-  { id: 'datos-personales', label: 'Datos Personales', icon: User },
-  { id: 'seguridad', label: 'Seguridad', icon: ShieldLock },
-  { id: 'apariencia', label: 'Apariencia', icon: Palette },
-  { id: 'idioma', label: 'Idioma', icon: Globe },
-  { id: 'ayuda' , label: 'Ayuda', icon: HelpCircle },
-  { id: 'configuracion' , label: 'Configuración', icon: Settings },
+  { id: 'datos-personales', label: 'Datos Personales', icon: 'pi pi-user' },
+  { id: 'seguridad', label: 'Seguridad', icon: 'pi pi-lock' },
+  { id: 'apariencia', label: 'Apariencia', icon: 'pi pi-palette' },
+  { id: 'idioma', label: 'Idioma', icon: 'pi pi-globe' },
+  { id: 'ayuda' , label: 'Ayuda', icon: 'pi pi-question-circle' },
+  { id: 'configuracion' , label: 'Configuración', icon: 'pi pi-cog' },
 ];
 
 const handleSectionChange = (sectionId) => {
@@ -42,7 +41,7 @@ const handleSectionChange = (sectionId) => {
           :class="{ active: activeSection === item.id }"
           @click="handleSectionChange(item.id)"
         >
-          <component :is="item.icon" class="menu-icon" />
+          <i :class="['menu-icon', item.icon]"></i>
           {{ item.label }}
         </li>
       </ul>
