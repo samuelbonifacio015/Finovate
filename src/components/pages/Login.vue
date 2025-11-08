@@ -7,7 +7,7 @@
 <div class="surface-0 flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
   <div class="grid justify-content-center p-2 lg:p-0" style="min-width: 80%">
     <div class="col-12 mt-5 xl:mt-0 text-center">
-      <img src="#" alt="Finovate Logo" class="mb-5" style="width: 81px; height: 60px;" />
+      <img src="/finovate.png" alt="Finovate Logo" class="mb-5" style="width: 81px; height: 81px; border-radius: 10px;" />
     </div>
     <div class="col-12 xl:col-6">
       <div class="h-full w-full m-0 py-7 px-4">
