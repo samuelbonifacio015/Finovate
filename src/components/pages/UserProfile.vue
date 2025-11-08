@@ -33,6 +33,7 @@ const handleSectionChange = (sectionId) => {
 const handleSave = () => {
   alert('Cambios guardados');
 }
+
 </script>
 
 <template>

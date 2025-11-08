@@ -1,6 +1,7 @@
 <script setup>
 
 import {onBeforeUnmount, onMounted, ref} from "vue";
+import UpdatesService from "@/service/UpdatesService.js";
 
 const topbarImage = () => {
   return 'public/finovate.png'
@@ -42,6 +43,17 @@ const logout = () => {
   showProfileMenu.value = false
 }
 
+const updatesService = new UpdatesService();
+const updates = ref([]);
+const showUpdates = ref (false);
+
+const loadUpdates = async () => {
+  showUpdates.value = !showUpdates.value;
+  if (showUpdates.value && updates.value.length === 0) {
+    updates.value = await updatesService.getUpdates();
+  }
+};
+
 </script>
 
 <template>
@@ -60,10 +72,17 @@ const logout = () => {
           <i class="pi pi-sun"></i>
         </button>
       </li>
-      <li>
-        <button class="p-link layout-topbar-button">
+
+      <li class="relative">
+        <button class="p-link layout-topbar-button" @click="loadUpdates">
           <i class="pi pi-inbox"></i>
         </button>
+        <ul v-if="showUpdates" class="updates-dropdown">
+          <li v-for="update in updates" :key="update.title">
+            <span>{{ update.icon }} {{ update.title }} - {{ update.date }}</span>
+            <p>{{ update.description }}</p>
+          </li>
+        </ul>
       </li>
 
       <li class="relative">
